@@ -1,22 +1,17 @@
-﻿using PIHelperSh.PdfCreater.Models.ImageModels;
-using PIHelperSh.PdfCreater.Models.PiechartModel;
-using PIHelperSh.PdfCreater.Models.TableModels;
-using PIHelperSh.PdfCreater.Models.TextModels;
+﻿using PIHelperSh.PdfCreator.Models.ImageModels;
+using PIHelperSh.PdfCreator.Models.PiechartModel;
+using PIHelperSh.PdfCreator.Models.TableModels;
+using PIHelperSh.PdfCreator.Models.TextModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PIHelperSh.PdfCreater.Interfases
+namespace PIHelperSh.PdfCreator.Interfases
 {
-    public interface IPdfCreater
+    public interface IPdfCreator
     {
-        /// <summary>
-        /// Метод начального создания документа PDF
-        /// </summary>
-        public void CreatePdf();
-
         /// <summary>
         /// Создаём параграф
         /// </summary>

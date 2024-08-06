@@ -1,11 +1,11 @@
-﻿using PIHelperSh.PdfCreater.Interfases;
+﻿using PIHelperSh.PdfCreator.Interfases;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PIHelperSh.PdfCreater.Models.TableModels
+namespace PIHelperSh.PdfCreator.Models.TableModels
 {
     /// <summary>
     /// Столбец(строка) таблицы, определяющий дальнейшее содержимое

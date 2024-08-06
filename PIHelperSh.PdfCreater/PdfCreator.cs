@@ -9,23 +9,30 @@ using System.IO;
 using MigraDoc.DocumentObjectModel.Tables;
 using System.Reflection;
 using MigraDoc.DocumentObjectModel.Shapes.Charts;
-using PIHelperSh.PdfCreater;
-using PIHelperSh.PdfCreater.Interfases;
-using PIHelperSh.PdfCreater.Models.TextModels;
-using PIHelperSh.PdfCreater.Enums;
-using PIHelperSh.PdfCreater.Models.ImageModels;
-using PIHelperSh.PdfCreater.Models.TableModels;
-using PIHelperSh.PdfCreater.Models.PiechartModel;
 using PIHelperSh.Core.Extensions;
+using PIHelperSh.PdfCreator.Interfases;
+using PIHelperSh.PdfCreator.Enums;
+using PIHelperSh.PdfCreator.Models.TableModels;
+using PIHelperSh.PdfCreator.Models.TextModels;
+using PIHelperSh.PdfCreator.Models.ImageModels;
+using PIHelperSh.PdfCreator.Models.PiechartModel;
 
-namespace PIHelperSh.PdfCreater.Implements
+namespace PIHelperSh.PdfCreator
 {
-	public class PdfCreater : IPdfCreater
+    public class PdfCreator : IPdfCreator
     {
         private Document? _document;
         private Section? _section;
 
         private readonly Unit borderWidth = 0.5;
+
+        public PdfCreator()
+        {
+            _document = new Document();
+            DefineStyles(_document);
+            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+            _section = _document.AddSection();
+        }
 
         #region Внутренние методы
         private static string GetListLavel(int level)
@@ -312,17 +319,6 @@ namespace PIHelperSh.PdfCreater.Implements
         }
 
         #endregion
-
-        /// <summary>
-        /// Метод начального создания документа PDF
-        /// </summary>
-        public void CreatePdf()
-        {
-            _document = new Document();
-            DefineStyles(_document);
-            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
-            _section = _document.AddSection();
-        }
 
         /// <summary>
         /// Создаём параграф

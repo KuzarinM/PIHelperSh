@@ -1,12 +1,12 @@
-﻿using PIHelperSh.PdfCreater.Enums;
-using PIHelperSh.PdfCreater.Interfases;
+﻿using PIHelperSh.PdfCreator.Enums;
+using PIHelperSh.PdfCreator.Interfases;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PIHelperSh.PdfCreater.Models.TextModels
+namespace PIHelperSh.PdfCreator.Models.TextModels
 {
     /// <summary>
     /// Параграф в PDF
@@ -24,7 +24,7 @@ namespace PIHelperSh.PdfCreater.Models.TextModels
         public PdfStyleType Style { get; set; } = PdfStyleType.Basic;
 
         /// <summary>
-        /// Выравнивание текста внутри параграфа (по умолчанию - по левой стороне)
+        /// Выравнивание текста внутри параграфа (по умолчанию - по левой строне)
         /// </summary>
         public PdfAlignmentType ParagraphAlignment { get; set; } = PdfAlignmentType.Left;
 

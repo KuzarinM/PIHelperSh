@@ -1,11 +1,16 @@
-﻿using PIHelperSh.PdfCreater.Interfases;
+﻿using PIHelperSh.PdfCreator.Interfases;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace PIHelperSh.PdfCreater.Models.TableModels
+namespace PIHelperSh.PdfCreator.Models.TableModels
 {
-	/// <summary>
-	/// Группа столбцов(строк) таблицы, определяющий дальнейшее содержимое
-	/// </summary>
-	public class PdfTableColumnGroup : IPdfColumnItem
+    /// <summary>
+    /// Группа столбцов(строк) таблицы, определяющий дальнейшее содержимое
+    /// </summary>
+    public class PdfTableColumnGroup : IPdfColumnItem
     {
         /// <summary>
         /// Заголовок
@@ -13,7 +18,7 @@ namespace PIHelperSh.PdfCreater.Models.TableModels
         public string? Title { get; set; }
 
         /// <summary>
-        /// Количество элементов в группе
+        /// Колличество элементов в группе
         /// </summary>
         public float? Size => InnerColumns.Sum(x => x.Size);
 

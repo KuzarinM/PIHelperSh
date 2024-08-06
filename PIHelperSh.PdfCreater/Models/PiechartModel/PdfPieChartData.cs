@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PIHelperSh.PdfCreater.Models.PiechartModel
+namespace PIHelperSh.PdfCreator.Models.PiechartModel
 {
     /// <summary>
     /// Элемент данных. Одно значение для диаграммы.
@@ -23,7 +23,7 @@ namespace PIHelperSh.PdfCreater.Models.PiechartModel
         public double Value { get; set; }
 
         /// <summary>
-        /// Цвет области на диаграмме. При null будет использоваться выдача цветов по умолчанию)
+        /// Цвет области на диаграме. При null будет использоватсся выдача цветов по умолчанию)
         /// </summary>
         public Color? Color { get; set; } = null;
 

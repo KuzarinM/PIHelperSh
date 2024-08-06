@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PIHelperSh.PdfCreater.Interfases
+namespace PIHelperSh.PdfCreator.Interfases
 {
     public interface IPdfColumnItem
     {

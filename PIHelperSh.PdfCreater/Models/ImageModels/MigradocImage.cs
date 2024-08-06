@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PIHelperSh.PdfCreater.Models.ImageModels
+namespace PIHelperSh.PdfCreator.Models.ImageModels
 {
     /// <summary>
     /// Удобный метод для хранения изображений (для создания Pdf документа можно использовать либо путь до фото, либо поток с данными о нём)
@@ -43,7 +43,7 @@ namespace PIHelperSh.PdfCreater.Models.ImageModels
         /// <summary>
         /// Создания изображения из строки base64
         /// </summary>
-        /// <param name="base64">изображение в формате base64</param>
+        /// <param name="base64">изобращение в формате base64</param>
         /// <returns></returns>
         public static MigradocImage CreateFromBase64(string base64) => new MigradocImage { _b64Source = $"base64:{base64}" };
 

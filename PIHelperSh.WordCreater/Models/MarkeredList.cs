@@ -1,14 +1,19 @@
-﻿using PIHelperSh.WordCreater.Interfaces;
+﻿using PIHelperSh.WordCreator.Interfaces;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace PIHelperSh.WordCreater.Models
+namespace PIHelperSh.WordCreator.Models
 {
-	/// <summary>
-	/// Маркированный(не нумерованный) список.
-	/// </summary>
-	public class MarkeredList : IRollElement
+    /// <summary>
+    /// Маркерованный(не нумерованный) список.
+    /// </summary>
+    public class MarkeredList : IRollElement
     {
         /// <summary>
-        /// Элементы списка(параграфы или другие списки)
+        /// Элементы спсика(параграфы или другие списки)
         /// </summary>
         public List<IRollElement> childs { get; set; } = new();
 

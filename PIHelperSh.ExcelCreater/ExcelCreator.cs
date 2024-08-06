@@ -10,12 +10,51 @@ using PIHelperSh.ExcelCreator.Models;
 
 namespace PIHelperSh.ExcelCreator
 {
-	public class ExcelCreator : IExcelCreator
+    public class ExcelCreator : IExcelCreator
     {
         private SpreadsheetDocument? _spreadsheetDocument;
         private SharedStringTablePart? _shareStringPart;
         private Worksheet? _worksheet;
         private MemoryStream stream;
+
+        public ExcelCreator()
+        {
+            stream = new MemoryStream();
+
+            _spreadsheetDocument = SpreadsheetDocument.Create(stream, SpreadsheetDocumentType.Workbook);
+            // Создаем книгу (в ней хранятся листы)
+            var workbookpart = _spreadsheetDocument.AddWorkbookPart();
+            workbookpart.Workbook = new Workbook();
+
+            CreateStyles(workbookpart);
+
+            // Получаем/создаем хранилище текстов для книги
+            _shareStringPart = _spreadsheetDocument.WorkbookPart!.GetPartsOfType<SharedStringTablePart>().Any()
+                ? _spreadsheetDocument.WorkbookPart.GetPartsOfType<SharedStringTablePart>().First()
+                : _spreadsheetDocument.WorkbookPart.AddNewPart<SharedStringTablePart>();
+
+            // Создаем SharedStringTable, если его нет
+            if (_shareStringPart.SharedStringTable == null)
+            {
+                _shareStringPart.SharedStringTable = new SharedStringTable();
+            }
+
+            // Создаем лист в книгу
+            var worksheetPart = workbookpart.AddNewPart<WorksheetPart>();
+            worksheetPart.Worksheet = new Worksheet(new SheetData());
+
+            // Добавляем лист в книгу
+            var sheets = _spreadsheetDocument.WorkbookPart.Workbook.AppendChild(new Sheets());
+            var sheet = new Sheet()
+            {
+                Id = _spreadsheetDocument.WorkbookPart.GetIdOfPart(worksheetPart),
+                SheetId = 1,
+                Name = "Лист 1"
+            };
+            sheets.Append(sheet);
+
+            _worksheet = worksheetPart.Worksheet;
+        }
 
         #region Служебные методы, необходимые для записи в excel документ
         private static void CreateStyles(WorkbookPart workbookpart)
@@ -230,44 +269,7 @@ namespace PIHelperSh.ExcelCreator
         }
         #endregion
 
-        public ExcelCreator()
-        {
-            stream = new MemoryStream();
-
-            _spreadsheetDocument = SpreadsheetDocument.Create(stream, SpreadsheetDocumentType.Workbook);
-            // Создаем книгу (в ней хранятся листы)
-            var workbookpart = _spreadsheetDocument.AddWorkbookPart();
-            workbookpart.Workbook = new Workbook();
-
-            CreateStyles(workbookpart);
-
-            // Получаем/создаем хранилище текстов для книги
-            _shareStringPart = _spreadsheetDocument.WorkbookPart!.GetPartsOfType<SharedStringTablePart>().Any()
-                ? _spreadsheetDocument.WorkbookPart.GetPartsOfType<SharedStringTablePart>().First()
-                : _spreadsheetDocument.WorkbookPart.AddNewPart<SharedStringTablePart>();
-
-            // Создаем SharedStringTable, если его нет
-            if (_shareStringPart.SharedStringTable == null)
-            {
-                _shareStringPart.SharedStringTable = new SharedStringTable();
-            }
-
-            // Создаем лист в книгу
-            var worksheetPart = workbookpart.AddNewPart<WorksheetPart>();
-            worksheetPart.Worksheet = new Worksheet(new SheetData());
-
-            // Добавляем лист в книгу
-            var sheets = _spreadsheetDocument.WorkbookPart.Workbook.AppendChild(new Sheets());
-            var sheet = new Sheet()
-            {
-                Id = _spreadsheetDocument.WorkbookPart.GetIdOfPart(worksheetPart),
-                SheetId = 1,
-                Name = "Лист 1"
-            };
-            sheets.Append(sheet);
-
-            _worksheet = worksheetPart.Worksheet;
-        }
+      
 
         public void ConfigureColumns(List<ExcelColumnSettings> settings)
         {

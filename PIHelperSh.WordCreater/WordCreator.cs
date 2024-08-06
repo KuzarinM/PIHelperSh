@@ -1,22 +1,21 @@
 ﻿using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Wordprocessing;
-using PIHelperSh.WordCreater;
-using PIHelperSh.WordCreater.Enums;
-using PIHelperSh.WordCreater.Interfaces;
-using PIHelperSh.WordCreater.Models;
+using PIHelperSh.WordCreator.Enums;
+using PIHelperSh.WordCreator.Interfaces;
+using PIHelperSh.WordCreator.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PIHelperSh.WordCreater.Implements
+namespace PIHelperSh.WordCreator
 {
-    public class WordCreater : IWordCreater
+    public class WordCreator : IWordCreator
     {
         private WordprocessingDocument? _wordDocument;
-        protected NumberingDefinitionsPart? _numberingPart;//Тут хранится списки(Заполняется только по необходимости см. InitLists() )
+        protected NumberingDefinitionsPart? _numberingPart;//Тут хранится списки (Заполняется только по необходимости см. InitLists() )
         private Body? _docBody;
         private MemoryStream? stream;
         private WordTextProperties _defaultTextProperties = new()
@@ -25,6 +24,16 @@ namespace PIHelperSh.WordCreater.Implements
             Bold = false,
             JustificationType = WordJustificationType.Both
         };
+
+        public WordCreator()
+        {
+            stream = new MemoryStream();
+
+            _wordDocument = WordprocessingDocument.Create(stream, WordprocessingDocumentType.Document);
+            MainDocumentPart mainPart = _wordDocument.AddMainDocumentPart();
+            mainPart.Document = new Document();
+            _docBody = mainPart.Document.AppendChild(new Body());
+        }
 
         #region Служебные методы, необходимые для записи в word документ
         private static JustificationValues GetJustificationValues(WordJustificationType type) => type switch
@@ -201,16 +210,6 @@ namespace PIHelperSh.WordCreater.Implements
         {
             get => _defaultTextProperties;
             set => _defaultTextProperties = value;
-        }
-
-        public void CreateWord(ListInfo info)
-        {
-            stream = new MemoryStream();
-
-            _wordDocument = WordprocessingDocument.Create(stream, WordprocessingDocumentType.Document);
-            MainDocumentPart mainPart = _wordDocument.AddMainDocumentPart();
-            mainPart.Document = new Document();
-            _docBody = mainPart.Document.AppendChild(new Body());
         }
 
         public void AddMarkeredList(MarkeredList list)

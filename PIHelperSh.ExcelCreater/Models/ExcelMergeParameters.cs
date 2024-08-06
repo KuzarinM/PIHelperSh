@@ -1,9 +1,15 @@
-﻿namespace PIHelperSh.ExcelCreator.Models
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace PIHelperSh.ExcelCreator.Models
 {
-	/// <summary>
-	/// Класс служит для объединения ячеек. Поля CellFrom и CellTo обязательные
-	/// </summary>
-	public class ExcelMergeParameters
+    /// <summary>
+    /// Класс служти для объединения ячеек. Поля CellFrom и CellTo обязательные
+    /// </summary>
+    public class ExcelMergeParameters
     {
         /// <summary>
         /// Начиная с какой ячейки объединяем
@@ -21,12 +27,12 @@
         public string Merge => $"{CellFrom.CellReference}:{CellTo.CellReference}";
 
         /// <summary>
-        /// Объединяет ли диапазон несколько строк
+        /// Объединяет ли диапозон несколько строк
         /// </summary>
         public bool isRowMerge => CellFrom.Row != CellTo.Row;
 
         /// <summary>
-        /// Объединяет ли диапазон несколько столбцов
+        /// Объединяет ли диапозон несколько столбцов
         /// </summary>
         public bool isCollumnMerge => CellFrom.Column != CellTo.Column;
     }

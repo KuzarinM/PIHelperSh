@@ -1,11 +1,16 @@
 ﻿using PIHelperSh.Core.Attributes;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace PIHelperSh.PdfCreater.Enums
+namespace PIHelperSh.PdfCreator.Enums
 {
-	/// <summary>
-	/// Типы отступов после элементов (вертикальный)
-	/// </summary>
-	public enum PdfMargin
+    /// <summary>
+    /// Типы отступов после элементов (вертикальный)
+    /// </summary>
+    public enum PdfMargin
     {
         /// <summary>
         /// Отступа нет

@@ -1,19 +1,13 @@
-﻿using PIHelperSh.WordCreater.Models;
+﻿using PIHelperSh.WordCreator.Models;
 
-namespace PIHelperSh.WordCreater.Interfaces
+namespace PIHelperSh.WordCreator.Interfaces
 {
-	public interface IWordCreater
+    public interface IWordCreator
     {
         /// <summary>
         /// Настройки текст по умолчанию для ВСЕГО документа
         /// </summary>
         public WordTextProperties DefaultTextProperies { get; }
-
-        /// <summary>
-        /// Метод создания документа.
-        /// </summary>
-        /// <param name="info"></param>
-        public void CreateWord(ListInfo info);
 
         /// <summary>
         /// Метод создания параграфа

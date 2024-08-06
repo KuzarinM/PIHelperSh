@@ -1,11 +1,11 @@
-﻿using PIHelperSh.PdfCreater.Enums;
+﻿using PIHelperSh.PdfCreator.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PIHelperSh.PdfCreater.Interfases
+namespace PIHelperSh.PdfCreator.Interfases
 {
     /// <summary>
     /// Аналогично word этот интерфейс нужен для работы списков. 

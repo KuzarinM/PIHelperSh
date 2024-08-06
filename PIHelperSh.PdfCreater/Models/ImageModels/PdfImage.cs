@@ -1,12 +1,17 @@
-﻿using PIHelperSh.PdfCreater.Enums;
-using PIHelperSh.PdfCreater.Interfases;
+﻿using PIHelperSh.PdfCreator.Enums;
+using PIHelperSh.PdfCreator.Interfases;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace PIHelperSh.PdfCreater.Models.ImageModels
+namespace PIHelperSh.PdfCreator.Models.ImageModels
 {
-	/// <summary>
-	/// Информация о изображении
-	/// </summary>
-	public class PdfImage : IPdfElement
+    /// <summary>
+    /// Информация о изображении
+    /// </summary>
+    public class PdfImage : IPdfElement
     {
         /// <summary>
         /// Путь до изображения
@@ -24,7 +29,7 @@ namespace PIHelperSh.PdfCreater.Models.ImageModels
         public int? Height { get; set; } = null;
 
         /// <summary>
-        /// Выравнивание текста внутри параграфа (по умолчанию - по левой стороне)
+        /// Выравнивание текста внутри параграфа (по умолчанию - по левой строне)
         /// </summary>
         public PdfAlignmentType ImageAlignment { get; set; } = PdfAlignmentType.Left;
 

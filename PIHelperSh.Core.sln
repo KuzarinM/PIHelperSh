@@ -5,6 +5,8 @@ VisualStudioVersion = 17.10.34916.146
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PIHelperSh.Core", "PIHelperSh.Core\PIHelperSh.Core.csproj", "{56D155E0-6F01-4C27-A1DE-98AB83F2C897}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestField", "TestField\TestField.csproj", "{30D4A051-097F-443D-92DD-D9503DEC8CE1}"
+EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PIHelperSh.AI.Core", "PIHelperSh.AI.Core\PIHelperSh.AI.Core.csproj", "{E75E96CE-7F31-49AE-84CC-8BC8BFAAA65C}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PIHelperSh.AI.GroqCloud", "PIHelperSh.AI.GroqCloud\PIHelperSh.AI.GroqCloud.csproj", "{5CDD59FF-A381-4F1F-95FA-E128788295AB}"
@@ -13,11 +15,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PIHelperSh.RandomEx", "PIHe
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PIHelperSh.AI.Kandinsky", "PIHelperSh.AI.Kandinsky\PIHelperSh.AI.Kandinsky.csproj", "{20C17E1E-4431-4144-9E1C-BAAD1CD5BFD9}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PIHelperSh.PdfCreater", "PIHelperSh.PdfCreater\PIHelperSh.PdfCreater.csproj", "{FFE0662C-4DBF-470E-9AB6-FD2DB81EC8DF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PIHelperSh.PdfCreator", "PIHelperSh.PdfCreater\PIHelperSh.PdfCreator.csproj", "{FFE0662C-4DBF-470E-9AB6-FD2DB81EC8DF}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PIHelperSh.WordCreater", "PIHelperSh.WordCreater\PIHelperSh.WordCreater.csproj", "{B0EE66AB-FCDF-45F6-BDA0-2CCEE13269A2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PIHelperSh.WordCreator", "PIHelperSh.WordCreater\PIHelperSh.WordCreator.csproj", "{B0EE66AB-FCDF-45F6-BDA0-2CCEE13269A2}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PIHelperSh.ExcelCreater", "PIHelperSh.ExcelCreater\PIHelperSh.ExcelCreater.csproj", "{575FE783-0057-4ECA-ABF3-3A84B22546CA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PIHelperSh.ExcelCreator", "PIHelperSh.ExcelCreater\PIHelperSh.ExcelCreator.csproj", "{575FE783-0057-4ECA-ABF3-3A84B22546CA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,6 +31,10 @@ Global
 		{56D155E0-6F01-4C27-A1DE-98AB83F2C897}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{56D155E0-6F01-4C27-A1DE-98AB83F2C897}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{56D155E0-6F01-4C27-A1DE-98AB83F2C897}.Release|Any CPU.Build.0 = Release|Any CPU
+		{30D4A051-097F-443D-92DD-D9503DEC8CE1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{30D4A051-097F-443D-92DD-D9503DEC8CE1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{30D4A051-097F-443D-92DD-D9503DEC8CE1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{30D4A051-097F-443D-92DD-D9503DEC8CE1}.Release|Any CPU.Build.0 = Release|Any CPU
 		{E75E96CE-7F31-49AE-84CC-8BC8BFAAA65C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{E75E96CE-7F31-49AE-84CC-8BC8BFAAA65C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E75E96CE-7F31-49AE-84CC-8BC8BFAAA65C}.Release|Any CPU.ActiveCfg = Release|Any CPU

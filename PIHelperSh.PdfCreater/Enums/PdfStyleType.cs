@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PIHelperSh.PdfCreater.Enums
+namespace PIHelperSh.PdfCreator.Enums
 {
     /// <summary>
     /// Типы стилей в документе

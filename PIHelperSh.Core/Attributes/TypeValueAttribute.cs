@@ -1,8 +1,14 @@
 ﻿namespace PIHelperSh.Core.Attributes
 {
-	[AttributeUsage(AttributeTargets.Field, AllowMultiple = true)]
+    /// <summary>
+    /// Позволяет привязывать к enum объекты любых типов
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Field, AllowMultiple = true)]
     public class TypeValueAttribute<T> : Attribute
     {
+        /// <summary>
+        /// Значение
+        /// </summary>
         public T Value { get; private set; }
 
         public TypeValueAttribute(T value)

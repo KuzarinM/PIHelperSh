@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PIHelperSh.WordCreater.Enums
+namespace PIHelperSh.WordCreator.Enums
 {
     /// <summary>
     /// Тип выравнивания содержимого для Word

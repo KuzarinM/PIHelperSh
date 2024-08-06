@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PIHelperSh.WordCreater.Models
+namespace PIHelperSh.WordCreator.Models
 {
     public class ListInfo
     {

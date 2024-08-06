@@ -1,12 +1,12 @@
-﻿using PIHelperSh.PdfCreater.Enums;
-using PIHelperSh.PdfCreater.Interfases;
+﻿using PIHelperSh.PdfCreator.Enums;
+using PIHelperSh.PdfCreator.Interfases;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PIHelperSh.PdfCreater.Models.TableModels
+namespace PIHelperSh.PdfCreator.Models.TableModels
 {
     /// <summary>
     /// Таблица для вставки на лист
@@ -40,7 +40,7 @@ namespace PIHelperSh.PdfCreater.Models.TableModels
         public PdfStyleType RecordStyle { get; set; } = PdfStyleType.Basic;
 
         /// <summary>
-        /// Выравнивание текста объектов в таблице (по умолчанию - по левой стороне)
+        /// Выравнивание текста объектов в таблице (по умолчанию - по левой строне)
         /// </summary>
         public PdfAlignmentType RecordHorisontalAlignment { get; set; } = PdfAlignmentType.Left;
     }
