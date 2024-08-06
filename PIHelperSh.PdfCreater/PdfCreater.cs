@@ -1,0 +1,472 @@
+﻿using MigraDoc.DocumentObjectModel;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using MigraDoc.Rendering;
+using System.IO;
+using MigraDoc.DocumentObjectModel.Tables;
+using System.Reflection;
+using MigraDoc.DocumentObjectModel.Shapes.Charts;
+using PIHelperSh.PdfCreater;
+using PIHelperSh.PdfCreater.Interfases;
+using PIHelperSh.PdfCreater.Models.TextModels;
+using PIHelperSh.PdfCreater.Enums;
+using PIHelperSh.PdfCreater.Models.ImageModels;
+using PIHelperSh.PdfCreater.Models.TableModels;
+using PIHelperSh.PdfCreater.Models.PiechartModel;
+using PIHelperSh.Core.Extentions;
+
+namespace PIHelperSh.PdfCreater.Implements
+{
+    public class PdfCreater : IPdfCreater
+    {
+        private Document? _document;
+        private Section? _section;
+
+        private readonly Unit borderWidth = 0.5;
+
+        #region Внутренние методы
+        private static string GetListLavel(int level)
+        {
+            try
+            {
+                return level.CreateEnumFromValue<PdfStyleType>().GetValue<string>();
+            }
+            catch (Exception ex)
+            {
+                return PdfStyleType.Basic.GetValue<string>();
+            }
+        }
+
+        private void ConfigurateChartLegend(Chart chart, PdfLegendPosition position)
+        {
+            switch (position)
+            {
+                case PdfLegendPosition.Bottom:
+                    chart.FooterArea.AddLegend();
+                    break;
+                case PdfLegendPosition.Right:
+                    chart.RightArea.AddLegend();
+                    break;
+                case PdfLegendPosition.Left:
+                    chart.LeftArea.AddLegend();
+                    break;
+                case PdfLegendPosition.Top:
+                    chart.TopArea.AddLegend();
+                    break;
+            }
+        }
+
+        private static void DefineStyles(Document document)
+        {
+            #region Базовый стиль
+            var style = document.Styles["Normal"];
+            style.Font.Name = "Times New Roman";
+            style.Font.Size = 14;
+            #endregion
+
+            #region Стиль заголовка
+            style = document.Styles.AddStyle("NormalTitle", "Normal");
+            style.Font.Bold = true;
+            style.Font.Size = 18;
+            #endregion
+
+            #region Стиль жирный
+            style = document.Styles.AddStyle("NormalBold", "Normal");
+            style.Font.Bold = true;
+            #endregion
+
+            #region Маркерованный список уровень 1
+            style = document.AddStyle("BulletList", "Normal");
+            style.ParagraphFormat.LeftIndent = "1.5cm";
+            style.ParagraphFormat.ListInfo = new ListInfo
+            {
+                ContinuePreviousList = true,//Продолжать список, который уже был ранее
+                ListType = ListType.BulletList1//Маркер
+            };
+            style.ParagraphFormat.TabStops.ClearAll();
+            style.ParagraphFormat.TabStops.AddTabStop(Unit.FromCentimeter(1.5), TabAlignment.Left);
+
+            style.ParagraphFormat.FirstLineIndent = "-0.5cm";
+            #endregion
+
+            #region Маркерованный список уровень 2
+            style = document.AddStyle("BulletList2", "BulletList");
+            style.ParagraphFormat.LeftIndent = "3.0cm";
+            style.ParagraphFormat.ListInfo.ListType = ListType.BulletList2;
+            style.ParagraphFormat.TabStops.ClearAll();
+            style.ParagraphFormat.TabStops.AddTabStop(Unit.FromCentimeter(3.0), TabAlignment.Left);
+            #endregion
+
+            #region Маркерованный список уровень 3
+            style = document.AddStyle("BulletList3", "BulletList");
+            style.ParagraphFormat.LeftIndent = "4.5cm";
+            style.ParagraphFormat.ListInfo.ListType = ListType.BulletList3;
+            style.ParagraphFormat.TabStops.ClearAll();
+            style.ParagraphFormat.TabStops.AddTabStop(Unit.FromCentimeter(4.5), TabAlignment.Left);
+            #endregion
+        }
+
+        private Paragraph? MakeParagraph(PdfParagraph pdfParagraph)
+        {
+            if (_section == null)
+                return null;
+            var paragraph = _section.AddParagraph(pdfParagraph.Text);
+            paragraph.Format.Alignment = pdfParagraph.ParagraphAlignment.GetValue<ParagraphAlignment>();
+            //Т.к стили могут назначаться по иному, тут будет вот так вот
+            return paragraph;
+        }
+
+        private Paragraph? MakeList(PdfList pdfList, int level)
+        {
+            Paragraph? last = null;
+            foreach (IPdfElement element in pdfList.Content)
+            {
+                if (element is PdfParagraph par)
+                {
+                    var paragraph = MakeParagraph(par);
+                    if (paragraph == null)
+                        continue;
+
+                    paragraph.Format.SpaceAfter = "0.3cm";
+                    paragraph.Style = GetListLavel(level);
+                    last = paragraph;
+                }
+                else if (element is PdfList ls)
+                {
+                    last = MakeList(ls, level + 1);
+                }
+            }
+            return last;
+        }
+
+        private void ConfigurateParagraph(Paragraph paragraph, PdfParagraph properties)
+        {
+            paragraph.Format.Alignment = properties.ParagraphAlignment.GetValue<ParagraphAlignment>(); ;
+            if (properties.MarginAfter != PdfMargin.None) paragraph.Format.SpaceAfter = properties.MarginAfter.GetValue<string>();
+            paragraph.Style = properties.Style.GetValue<string>();
+        }
+
+        private void ConfigurateCell(Cell cell, string text, PdfAlignmentType alignment, PdfStyleType style, int? rightMerge = null, int? downMerge = null, bool dcw = false)
+        {
+            if (rightMerge.HasValue) cell.MergeRight = rightMerge.Value;
+            if (downMerge.HasValue)
+            {
+                cell.MergeDown = downMerge.Value;
+                cell.VerticalAlignment = VerticalAlignment.Center;
+            }
+
+            Paragraph paragraph = cell.AddParagraph(text);
+            ConfigurateParagraph(paragraph, new()
+            {
+                ParagraphAlignment = alignment,
+                Style = style,
+                MarginAfter = PdfMargin.None
+            });
+
+            cell.Borders.Left.Width = borderWidth;
+            cell.Borders.Right.Width = borderWidth;
+            cell.Borders.Top.Width = borderWidth;
+            cell.Borders.Bottom.Width = borderWidth;
+
+            if (dcw)
+            {
+                float columnNeeds = text.Length / 3.8f;
+                if (cell.Column.Width.Centimeter < columnNeeds)
+                    cell.Column.Width = Unit.FromCentimeter(columnNeeds);
+            }
+        }
+
+        private Func<object?, object?> GetGetter(FieldInfo[] fields, PropertyInfo[] props, string Name)
+        {
+            var a = fields.FirstOrDefault(x => x.Name == Name);
+            if (a != null) return a.GetValue;
+
+            var b = props.FirstOrDefault(x => x.Name == Name);
+            if (b != null) return b.GetValue;
+
+            throw new KeyNotFoundException($"У объекта не найденно поле/свойство {Name}");
+        }
+
+        private List<Func<object?, object?>> MakeTableHeader<T>(Table table, PdfTable<T> header)
+        {
+            foreach (var item in header.Header)
+            {
+                if (item is PdfTableColumnGroup group)
+                {
+                    group.InnerColumns.ForEach(x => table.AddColumn(Unit.FromCentimeter(x.Size.Value)));
+                }
+                else
+                {
+                    table.AddColumn(Unit.FromCentimeter(item.Size.Value));
+                }
+            }
+
+            Row upRow = table.AddRow();
+            Row downRow = table.AddRow();
+            upRow.HeadingFormat = downRow.HeadingFormat = true;
+            upRow.Format.Font.Bold = downRow.Format.Font.Bold = true;
+
+            int upColumn = 0;
+            int downColumn = 0;
+
+            Type eType = typeof(T);
+
+            var fields = eType.GetFields();
+            var prop = eType.GetProperties();
+
+            List<Func<object?, object?>> objectFields = new();
+
+            foreach (var item in header.Header)
+            {
+                if (item is PdfTableColumnGroup group)
+                {
+                    ConfigurateCell(upRow.Cells[upColumn], group.Title, header.HeaderHorisontalAlignment, header.HeaderStyle, rightMerge: group.InnerColumns.Count - 1);
+                    upColumn += group.InnerColumns.Count;
+                    foreach (var ic in group.InnerColumns)
+                    {
+                        ConfigurateCell(downRow.Cells[downColumn], ic.Title, header.HeaderHorisontalAlignment, header.HeaderStyle);
+                        objectFields.Add(GetGetter(fields, prop, ic.PropertyName));
+                        downColumn++;
+                    }
+                }
+                else
+                {
+                    ConfigurateCell(upRow.Cells[upColumn], item.Title, header.HeaderHorisontalAlignment, header.HeaderStyle, downMerge: 1);
+                    ConfigurateCell(downRow.Cells[downColumn], item.Title, header.HeaderHorisontalAlignment, header.HeaderStyle);
+                    objectFields.Add(GetGetter(fields, prop, ((PdfTableColumn)item).PropertyName));
+                    upColumn++;
+                    downColumn++;
+                }
+            }
+
+            return objectFields;
+        }
+
+        private void MakeTableWithHederInRow<T>(Table table, PdfTable<T> header)
+        {
+            for (int i = 0; i < header.Records.Count + 2; i++)
+            {
+                var c = table.AddColumn("0.5cm");
+            }
+
+            Type tp = typeof(T);
+            var fields = tp.GetFields();
+            var props = tp.GetProperties();
+
+            foreach (var item in header.Header!)
+            {
+                Row row = table.AddRow();
+                if (item is PdfTableColumnGroup group)
+                {
+                    ConfigurateCell(row.Cells[0], group.Title!, header.HeaderHorisontalAlignment, header.HeaderStyle, downMerge: group.InnerColumns.Count - 1, dcw: true);
+                    foreach (var innerParam in group.InnerColumns)
+                    {
+                        if (row == null) row = table.AddRow();//Первая(а точнее вторая) часть костыля с первой строкой
+                        row.HeightRule = RowHeightRule.Exactly;
+                        row.Height = Unit.FromCentimeter(innerParam.Size.Value);//Устанавливаем высоту строки. Так просили...
+
+                        ConfigurateCell(row.Cells[1], innerParam.Title!, header.HeaderHorisontalAlignment, header.HeaderStyle, dcw: true);
+
+                        Func<object?, object?> getter = GetGetter(fields, props, innerParam.PropertyName);
+                        for (int i = 0; i < header.Records.Count; i++)
+                        {
+                            ConfigurateCell(row.Cells[i + 2], getter(header.Records[i]).ToString(), header.RecordHorisontalAlignment, header.RecordStyle, dcw: true);
+                        }
+                        row = null; //Это небольшой костыль, который позволяет не создавать новую строчку в саммый первый раз(т.к. она же есть)
+                    }
+                }
+                else if (item is PdfTableColumn column)
+                {
+                    row.HeightRule = RowHeightRule.Exactly;
+                    row.Height = Unit.FromCentimeter(column.Size.Value);
+                    ConfigurateCell(row.Cells[0], column.Title!, header.HeaderHorisontalAlignment, header.HeaderStyle, rightMerge: 1, dcw: true);
+
+                    Func<object?, object?> getter = GetGetter(fields, props, column.PropertyName);
+                    for (int i = 0; i < header.Records.Count; i++)
+                    {
+                        ConfigurateCell(row.Cells[i + 2], getter(header.Records[i]).ToString(), header.RecordHorisontalAlignment, header.RecordStyle, dcw: true);
+                    }
+                }
+            }
+        }
+
+        private void ConfiguratePieChart(Chart chart, PdfPieChartModel pieChart)
+        {
+            chart.Width = Unit.FromCentimeter(pieChart.Width);
+            chart.Height = Unit.FromCentimeter(pieChart.Height);
+
+            Paragraph p = chart.HeaderArea.AddParagraph(pieChart.ChartName);
+            ConfigurateParagraph(p, new()
+            {
+                Style = pieChart.HeaderStyle,
+                ParagraphAlignment = pieChart.HeaderAlignment,
+                MarginAfter = PdfMargin.None
+            });
+
+            chart.LineFormat.Visible = true;
+            ConfigurateChartLegend(chart, pieChart.LegendPosition);
+            chart.DataLabel.Position = DataLabelPosition.OutsideEnd;
+        }
+
+        #endregion
+
+        /// <summary>
+        /// Метод начального создания документа PDF
+        /// </summary>
+        public void CreatePdf()
+        {
+            _document = new Document();
+            DefineStyles(_document);
+            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+            _section = _document.AddSection();
+        }
+
+        /// <summary>
+        /// Создаём параграф
+        /// </summary>
+        /// <param name="paragraph">Модель параграфа, который вставляем</param>
+        public void AddParagraph(PdfParagraph pdfParagraph)
+        {
+            var paragraph = MakeParagraph(pdfParagraph);
+            if (paragraph == null)
+                return;
+
+            ConfigurateParagraph(paragraph, pdfParagraph);
+        }
+
+        /// <summary>
+        /// Создаём маркерованный список
+        /// </summary>
+        /// <param name="List">Модель списка(может быть многоуровневым). Max - 3 уровня</param>
+        public void AddList(PdfList pdfList)
+        {
+            if (_section == null)
+            {
+                return;
+            }
+            var lastP = MakeList(pdfList, 1);
+            if (lastP != null) lastP.Format.SpaceAfter = pdfList.MarginAfter.GetValue<string>();
+        }
+
+        /// <summary>
+        /// Создаёт таблицу, с шапкой из 2-х строк(с группировками)
+        /// </summary>
+        /// <typeparam name="T">Тип DTO, из которой берё=утся данные в таблицу</typeparam>
+        /// <param name="header">Модель самой таблицы</param>
+        public void AddTable<T>(PdfTable<T> header, bool rowHeaded = false)
+        {
+            if (_document == null)
+            {
+                return;
+            }
+
+            if (rowHeaded)
+            {
+                _section.PageSetup.Orientation = Orientation.Landscape;
+                _section.PageSetup.LeftMargin = 10;
+                MakeTableWithHederInRow(_document.LastSection.AddTable(), header);
+                return;
+            }
+
+            var table = _document.LastSection.AddTable();
+            if (rowHeaded)
+            {
+                MakeTableWithHederInRow(table, header);
+                return;
+            }
+
+            var maper = MakeTableHeader(table, header);
+
+            foreach (var item in header.Records)
+            {
+                var row = table.AddRow();
+                for (int i = 0; i < maper.Count; i++)
+                {
+                    ConfigurateCell(row.Cells[i], maper[i](item)?.ToString(), header.RecordHorisontalAlignment, header.RecordStyle);
+                }
+            }
+
+        }
+
+        /// <summary>
+        /// Создаёт круговую диаграму.
+        /// </summary>
+        /// <param name="pieChart">Модель для круговой диаграмы</param>
+        public void AddChart(PdfPieChartModel pieChart)
+        {
+            if (_document == null)
+            {
+                return;
+            }
+
+            Chart chart = new Chart(ChartType.Pie2D);
+            ConfiguratePieChart(chart, pieChart);
+
+            Series series = chart.SeriesCollection.AddSeries();
+            XSeries xseries = chart.XValues.AddXSeries();
+
+            foreach (var item in pieChart.DataSet)
+            {
+                var p = series.Add(item.Value);
+                xseries.Add(item.DisplayName);
+                if (item.Color.HasValue)
+                {
+                    p.FillFormat.Color = new Color((uint)item.Color.Value.ToArgb());
+                }
+            }
+
+            _section.Add(chart);
+        }
+
+        /// <summary>
+        /// Добавляем на лист изображение. Можно по пути, можно по потоку, можно по Base64 строке
+        /// </summary>
+        /// <param name="image">Модель одного изображения</param>
+        public void AddImage(PdfImage img)
+        {
+            if (_section == null) return;
+            var paragraph = _section.AddParagraph();//Это некоторый костыли. Видете ли, у изображения настроить выравнивание - это очень непросто. А вот так вот - можно
+            var image = paragraph.AddImage(img.Image.GetImageForMigraDoc());
+
+            if (img.Width.HasValue) image.Width = img.Width.Value;
+            if (img.Height.HasValue) image.Width = img.Height.Value;
+
+            paragraph.Format.Alignment = img.ImageAlignment.GetValue<ParagraphAlignment>();
+            paragraph.Format.SpaceAfter = img.MarginAfter.GetValue<string>();
+        }
+
+        /// <summary>
+        /// Метод сохранения созданного PDF документа
+        /// </summary>
+        /// <returns>Поток MemoryStream с документом</returns>
+        public MemoryStream SavePdf()
+        {
+            var renderer = new PdfDocumentRenderer(true)
+            {
+                Document = _document
+            };
+            renderer.RenderDocument();
+
+            MemoryStream file = new MemoryStream();
+            renderer.PdfDocument.Save(file, false);
+
+            file.Seek(0, SeekOrigin.Begin);
+            return file;
+        }
+
+        /// <summary>
+        /// Метод сохранения созданного PDF документа в файл
+        /// </summary>
+        /// <param name="filename">Имя файла и путь до него. Проверки на расширение нет</param>
+        public void SavePdf(string filename)
+        {
+            using Stream streamToWriteTo = File.Open(filename, FileMode.Create);
+            MemoryStream ms = SavePdf();
+            ms.Position = 0;
+            ms.CopyTo(streamToWriteTo);
+        }
+    }
+}

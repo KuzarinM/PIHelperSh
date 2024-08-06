@@ -1,0 +1,44 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Data.SqlTypes;
+using System.Linq;
+using System.Reflection;
+using System.Text;
+using System.Threading.Tasks;
+using PIHelperSh.Core.Attributes;
+
+namespace PIHelperSh.Core.Extentions
+{
+    public static class EnumExtention
+    {
+        public static T GetValue<T>(this Enum value)
+        {
+            Type type = value.GetType();
+
+            FieldInfo? fieldInfo = type.GetField(value.ToString());
+
+            if (fieldInfo != null)
+            {
+                var attribs = fieldInfo.GetCustomAttribute(typeof(TypeValueAttribute<T>), false) as TypeValueAttribute<T>;
+
+                return attribs != null && attribs != null ? attribs.Value : default;
+            }
+            return default;
+        }
+
+        public static T CreateEnumFromValue<T>(this object target) where T : Enum
+        {
+            var targetType = typeof(TypeValueAttribute<>).MakeGenericType(target.GetType());
+
+            foreach (var item in Enum.GetValues(typeof(T)))
+            {
+                var customAttr = item.GetType().GetCustomAttribute(targetType, false);
+                if (customAttr != null && customAttr.GetType().GetProperty("Value")?.GetValue(customAttr) == target)
+                {
+                    return (T)item;
+                }
+            }
+            return default;
+        }
+    }
+}
