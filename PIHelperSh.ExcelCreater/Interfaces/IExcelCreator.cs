@@ -1,25 +1,14 @@
-﻿using PIHelperSh.ExcelCreater.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using PIHelperSh.ExcelCreator.Models;
 
-namespace PIHelperSh.ExcelCreater.Interfaces
+namespace PIHelperSh.ExcelCreator.Interfaces
 {
-    public interface IExcelCreater
+	public interface IExcelCreator
     {
-        /// <summary>
-        /// Метод, непосредственно создающий Excel документ
-        /// </summary>
-        /// <param name="info"></param>
-        public void CreateExcel();
-
         /// <summary>
         /// Позволяет настроить фиксированную ширину для конкретных столбцов. 
         /// </summary>
-        /// <param name="settings">Список столбцов с необходимиыми значениями ширины</param>
-        public void ConfigurateColumns(List<ExcelColumnSettings> settings);
+        /// <param name="settings">Список столбцов с необходимыми значениями ширины</param>
+        public void ConfigureColumns(List<ExcelColumnSettings> settings);
 
         /// <summary>
         /// Позволяет вставить на лист Excel целую строку(последовательно размещается)

@@ -15,7 +15,7 @@ namespace PIHelperSh.AI.GroqCloud
         public string? ApiKey { get; set; } = string.Empty;
 
         /// <summary>
-        /// Proxyes servers list
+        /// Proxys servers list
         /// </summary>
         public List<ProxyModel> Proxys { get; set; } = new();
         private int position = 0;

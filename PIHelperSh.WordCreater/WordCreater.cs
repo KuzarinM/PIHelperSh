@@ -16,7 +16,7 @@ namespace PIHelperSh.WordCreater.Implements
     public class WordCreater : IWordCreater
     {
         private WordprocessingDocument? _wordDocument;
-        protected NumberingDefinitionsPart? _numberingPart;//Тут храняться списки(Заполняется только по необходиомсти см. InitLists() )
+        protected NumberingDefinitionsPart? _numberingPart;//Тут хранится списки(Заполняется только по необходимости см. InitLists() )
         private Body? _docBody;
         private MemoryStream? stream;
         private WordTextProperties _defaultTextProperties = new()
@@ -68,7 +68,7 @@ namespace PIHelperSh.WordCreater.Implements
             var paragraphMarkRunProperties = new ParagraphMarkRunProperties();
             if (paragraphProperties.Size.HasValue)
             {
-                paragraphMarkRunProperties.AppendChild(new FontSize { Val = (paragraphProperties.Size.Value * 2).ToString() });//todo ERROR По неизвесной науке причине 10 шрифт в коде, это 5 в word.
+                paragraphMarkRunProperties.AppendChild(new FontSize { Val = (paragraphProperties.Size.Value * 2).ToString() });//todo ERROR По неизвестной науке причине 10 шрифт в коде, это 5 в word.
             }
             properties.AppendChild(paragraphMarkRunProperties);
 
@@ -86,7 +86,7 @@ namespace PIHelperSh.WordCreater.Implements
                 var docRun = new Run();
                 var properties = new RunProperties();
 
-                //todo WARNING По несовсем ясной причине, настройки шрифтов не применяются к прогонам параграфа. Поэтому, их необходимо выставлять вручную.
+                //todo WARNING По не совсем ясной причине, настройки шрифтов не применяются к прогонам параграфа. Поэтому, их необходимо выставлять вручную.
                 if (run.properties != null && run.properties.Size.HasValue)
                 {
                     properties.AppendChild(new FontSize { Val = (run.properties.Size.Value * 2).ToString() });
@@ -138,8 +138,8 @@ namespace PIHelperSh.WordCreater.Implements
             {
                 LevelIndex = 2,
             };
-            //todo INFO Иного сопособа сделать списки Нормальными(с отступами) не существует. openXML сам такое не умеет
-            //Все данные вязяти из документа word(созданного силами самого редактора word) со списками(пришлось лесть в xml структуру).
+            //todo INFO Иного способа сделать списки Нормальными(с отступами) не существует. openXML сам такое не умеет
+            //Все данные взятия из документа word(созданного силами самого редактора word) со списками(пришлось лесть в xml структуру).
             firstLevel.AppendChild(new ParagraphProperties(new Indentation
             {
                 Left = "720",
@@ -182,7 +182,7 @@ namespace PIHelperSh.WordCreater.Implements
                         new NumberingId() { Val = listId }); ;
                     if (paragraph.ParagraphProperties == null)
                     {
-                        throw new ArgumentNullException("This situation is imposible, if you create paragraf with TextProperties properties");
+                        throw new ArgumentNullException("This situation is impossible, if you create paragraph with TextProperties properties");
                     }
                     paragraph.ParagraphProperties.AppendChild(numProp);
                     _docBody.AppendChild(paragraph);

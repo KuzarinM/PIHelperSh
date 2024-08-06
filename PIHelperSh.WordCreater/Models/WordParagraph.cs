@@ -1,19 +1,14 @@
 ﻿using PIHelperSh.WordCreater.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PIHelperSh.WordCreater.Models
 {
-    /// <summary>
-    /// Класс, ответственный за параграфы.
-    /// </summary>
-    public class WordParagraph : IRollElement
+	/// <summary>
+	/// Класс, ответственный за параграфы.
+	/// </summary>
+	public class WordParagraph : IRollElement
     {
         /// <summary>
-        /// Весь таекст параграфа состоит из прогнов (у каждого могут быть свои настройки). Если их нет, то применяются настройки по умолчанию
+        /// Весь текст параграфа состоит из прогонов (у каждого могут быть свои настройки). Если их нет, то применяются настройки по умолчанию
         /// </summary>
         public List<(string run, WordTextProperties? properties)> Texts { get; set; } = new();
 

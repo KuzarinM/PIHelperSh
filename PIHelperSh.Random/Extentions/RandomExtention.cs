@@ -132,7 +132,7 @@ namespace PIHelperSh.RandomEx.Extentions
                     if (regex[i] == '[')
                         inRange = true;//Переходим в множество для выбора
                     else if (regex[i] == '\\' && i + 1 < regex.Length)
-                        sb.Append(regex[++i]); //Псоле символа экранированя символ проходит сразу
+                        sb.Append(regex[++i]); //После символа экранирования символ проходит сразу
                     else
                         sb.Append(regex[i]);//Иначе закидываем символ
                 }

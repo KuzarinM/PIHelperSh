@@ -4,7 +4,7 @@ using PIHelperSh.AI.Core.Models;
 using PIHelperSh.AI.Core.Models.ImageGenerator;
 using PIHelperSh.AI.Kandinsky.Enums;
 using PIHelperSh.AI.Kandinsky.Models.Internal;
-using PIHelperSh.Core.Extentions;
+using PIHelperSh.Core.Extensions;
 using RestSharp;
 using System;
 using System.Collections.Generic;
@@ -19,7 +19,7 @@ using static System.Net.Mime.MediaTypeNames;
 
 namespace PIHelperSh.AI.Kandinsky
 {
-    public class KandinskyAIImageGenerator : ICloudAIImageGenerator
+	public class KandinskyAIImageGenerator : ICloudAIImageGenerator
     {
         private readonly KandinskyAIContext _context;
 

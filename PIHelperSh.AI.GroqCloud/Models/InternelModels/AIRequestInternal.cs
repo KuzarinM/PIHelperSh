@@ -1,10 +1,10 @@
 ﻿using PIHelperSh.AI.GroqCloud.Models.DTOs;
 using PIHelperSh.AI.GroqCloud.Models.Enums;
-using PIHelperSh.Core.Extentions;
+using PIHelperSh.Core.Extensions;
 
 namespace PIHelperSh.AI.GroqCloud.Models.InternelModels
 {
-    internal class AIRequestInternal
+	internal class AIRequestInternal
     {
         public List<AIMessageInternal> Messages = new();
 

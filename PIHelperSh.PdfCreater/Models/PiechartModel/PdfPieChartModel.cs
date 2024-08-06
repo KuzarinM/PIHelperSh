@@ -13,7 +13,7 @@ namespace PIHelperSh.PdfCreater.Models.PiechartModel
     public class PdfPieChartModel
     {
         /// <summary>
-        /// Ширина диаграммы в см по умолванию на всю ширину
+        /// Ширина диаграммы в см по умолчанию на всю ширину
         /// </summary>
         public double Width { get; set; } = 16;
 
@@ -23,7 +23,7 @@ namespace PIHelperSh.PdfCreater.Models.PiechartModel
         public double Height { get; set; } = 12;
 
         /// <summary>
-        /// Заголовок диаграммы. Будет отбражён над ней
+        /// Заголовок диаграммы. Будет отображён над ней
         /// </summary>
         public string ChartName { get; set; }
 

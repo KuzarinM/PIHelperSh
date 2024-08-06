@@ -3,19 +3,14 @@ using DocumentFormat.OpenXml.Office2010.Excel;
 using DocumentFormat.OpenXml.Office2013.Excel;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
-using PIHelperSh.Core.Extentions;
-using PIHelperSh.ExcelCreater.Enums;
-using PIHelperSh.ExcelCreater.Interfaces;
-using PIHelperSh.ExcelCreater.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using PIHelperSh.Core.Extensions;
+using PIHelperSh.ExcelCreator.Enums;
+using PIHelperSh.ExcelCreator.Interfaces;
+using PIHelperSh.ExcelCreator.Models;
 
-namespace PIHelperSh.ExcelCreater
+namespace PIHelperSh.ExcelCreator
 {
-    public class ExcelCreater : IExcelCreater
+	public class ExcelCreator : IExcelCreator
     {
         private SpreadsheetDocument? _spreadsheetDocument;
         private SharedStringTablePart? _shareStringPart;
@@ -117,7 +112,7 @@ namespace PIHelperSh.ExcelCreater
             borders.Append(borderMedium);
             #endregion
 
-            #region Какие-то предстилевые настройки
+            #region Какие-то пред стилевые настройки
             var cellStyleFormats = new CellStyleFormats() { Count = 1U };
 
             var cellFormatStyle = new CellFormat() { NumberFormatId = 0U, FontId = 0U, FillId = 0U, BorderId = 0U };
@@ -235,7 +230,7 @@ namespace PIHelperSh.ExcelCreater
         }
         #endregion
 
-        public void CreateExcel()
+        public ExcelCreator()
         {
             stream = new MemoryStream();
 
@@ -274,7 +269,7 @@ namespace PIHelperSh.ExcelCreater
             _worksheet = worksheetPart.Worksheet;
         }
 
-        public void ConfigurateColumns(List<ExcelColumnSettings> settings)
+        public void ConfigureColumns(List<ExcelColumnSettings> settings)
         {
             if (_worksheet == null || _shareStringPart == null)
             {
@@ -317,7 +312,7 @@ namespace PIHelperSh.ExcelCreater
             string column = excelRow.Column;
             int sharedStringCount = _shareStringPart.SharedStringTable.Elements<SharedStringItem>().Count();
 
-            foreach (var item in excelRow.CelsTexts)
+            foreach (var item in excelRow.CellsTexts)
             {
                 string reference = $"{column}{excelRow.Row}";
                 Cell? cell = row.Elements<Cell>().Where(c => c.CellReference!.Value == reference).FirstOrDefault();

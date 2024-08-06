@@ -1,15 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace PIHelperSh.ExcelCreater
+﻿namespace PIHelperSh.ExcelCreator
 {
-    /// <summary>
-    /// Методы расширения чисто для Excel
-    /// </summary>
-    internal static class OfficePackageExtentions
+	/// <summary>
+	/// Методы расширения чисто для Excel
+	/// </summary>
+	internal static class OfficePackageExtentions
     {
         private static readonly int LetterCount = 26;
 
@@ -63,7 +57,7 @@ namespace PIHelperSh.ExcelCreater
         }
 
         /// <summary>
-        /// Возвечедение целых числе в степень. Необходимо для работы ConvertToInt
+        /// Возведение целых числе в степень. Необходимо для работы ConvertToInt
         /// </summary>
         /// <param name="a"></param>
         /// <param name="b"></param>
