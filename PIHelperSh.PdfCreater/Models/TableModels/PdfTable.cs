@@ -40,7 +40,7 @@ namespace PIHelperSh.PdfCreater.Models.TableModels
         public PdfStyleType RecordStyle { get; set; } = PdfStyleType.Basic;
 
         /// <summary>
-        /// Выравнивание текста объектов в таблице (по умолчанию - по левой строне)
+        /// Выравнивание текста объектов в таблице (по умолчанию - по левой стороне)
         /// </summary>
         public PdfAlignmentType RecordHorisontalAlignment { get; set; } = PdfAlignmentType.Left;
     }

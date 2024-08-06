@@ -1,13 +1,6 @@
-﻿using PIHelperSh.AI.Kandinsky.Enums;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace PIHelperSh.AI.Kandinsky.Models.Internal
+﻿namespace PIHelperSh.AI.Kandinsky.Models.Internal
 {
-    internal class KandinskyGenerateRequestDTO
+	internal class KandinskyGenerateRequestDTO
     {
         public string type { get; set; }
 

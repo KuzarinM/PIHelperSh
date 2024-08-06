@@ -24,7 +24,7 @@ namespace PIHelperSh.PdfCreater.Models.TextModels
         public PdfStyleType Style { get; set; } = PdfStyleType.Basic;
 
         /// <summary>
-        /// Выравнивание текста внутри параграфа (по умолчанию - по левой строне)
+        /// Выравнивание текста внутри параграфа (по умолчанию - по левой стороне)
         /// </summary>
         public PdfAlignmentType ParagraphAlignment { get; set; } = PdfAlignmentType.Left;
 

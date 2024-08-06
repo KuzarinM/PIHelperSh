@@ -1,5 +1,4 @@
-﻿
-using PIHelperSh.Core.Attributes;
+﻿using PIHelperSh.Core.Attributes;
 
 namespace PIHelperSh.AI.GroqCloud.Models.Enums
 {

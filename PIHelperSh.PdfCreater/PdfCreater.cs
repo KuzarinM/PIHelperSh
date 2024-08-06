@@ -16,11 +16,11 @@ using PIHelperSh.PdfCreater.Enums;
 using PIHelperSh.PdfCreater.Models.ImageModels;
 using PIHelperSh.PdfCreater.Models.TableModels;
 using PIHelperSh.PdfCreater.Models.PiechartModel;
-using PIHelperSh.Core.Extentions;
+using PIHelperSh.Core.Extensions;
 
 namespace PIHelperSh.PdfCreater.Implements
 {
-    public class PdfCreater : IPdfCreater
+	public class PdfCreater : IPdfCreater
     {
         private Document? _document;
         private Section? _section;
@@ -78,7 +78,7 @@ namespace PIHelperSh.PdfCreater.Implements
             style.Font.Bold = true;
             #endregion
 
-            #region Маркерованный список уровень 1
+            #region Маркированный список уровень 1
             style = document.AddStyle("BulletList", "Normal");
             style.ParagraphFormat.LeftIndent = "1.5cm";
             style.ParagraphFormat.ListInfo = new ListInfo
@@ -92,7 +92,7 @@ namespace PIHelperSh.PdfCreater.Implements
             style.ParagraphFormat.FirstLineIndent = "-0.5cm";
             #endregion
 
-            #region Маркерованный список уровень 2
+            #region Маркированный список уровень 2
             style = document.AddStyle("BulletList2", "BulletList");
             style.ParagraphFormat.LeftIndent = "3.0cm";
             style.ParagraphFormat.ListInfo.ListType = ListType.BulletList2;
@@ -100,7 +100,7 @@ namespace PIHelperSh.PdfCreater.Implements
             style.ParagraphFormat.TabStops.AddTabStop(Unit.FromCentimeter(3.0), TabAlignment.Left);
             #endregion
 
-            #region Маркерованный список уровень 3
+            #region Маркированный список уровень 3
             style = document.AddStyle("BulletList3", "BulletList");
             style.ParagraphFormat.LeftIndent = "4.5cm";
             style.ParagraphFormat.ListInfo.ListType = ListType.BulletList3;
@@ -187,7 +187,7 @@ namespace PIHelperSh.PdfCreater.Implements
             var b = props.FirstOrDefault(x => x.Name == Name);
             if (b != null) return b.GetValue;
 
-            throw new KeyNotFoundException($"У объекта не найденно поле/свойство {Name}");
+            throw new KeyNotFoundException($"У объекта не найдено поле/свойство {Name}");
         }
 
         private List<Func<object?, object?>> MakeTableHeader<T>(Table table, PdfTable<T> header)
@@ -275,7 +275,7 @@ namespace PIHelperSh.PdfCreater.Implements
                         {
                             ConfigurateCell(row.Cells[i + 2], getter(header.Records[i]).ToString(), header.RecordHorisontalAlignment, header.RecordStyle, dcw: true);
                         }
-                        row = null; //Это небольшой костыль, который позволяет не создавать новую строчку в саммый первый раз(т.к. она же есть)
+                        row = null; //Это небольшой костыль, который позволяет не создавать новую строчку в самый первый раз(т.к. она же есть)
                     }
                 }
                 else if (item is PdfTableColumn column)
@@ -338,7 +338,7 @@ namespace PIHelperSh.PdfCreater.Implements
         }
 
         /// <summary>
-        /// Создаём маркерованный список
+        /// Создаём маркированный список
         /// </summary>
         /// <param name="List">Модель списка(может быть многоуровневым). Max - 3 уровня</param>
         public void AddList(PdfList pdfList)
@@ -354,7 +354,7 @@ namespace PIHelperSh.PdfCreater.Implements
         /// <summary>
         /// Создаёт таблицу, с шапкой из 2-х строк(с группировками)
         /// </summary>
-        /// <typeparam name="T">Тип DTO, из которой берё=утся данные в таблицу</typeparam>
+        /// <typeparam name="T">Тип DTO, из которой берутся данные в таблицу</typeparam>
         /// <param name="header">Модель самой таблицы</param>
         public void AddTable<T>(PdfTable<T> header, bool rowHeaded = false)
         {
@@ -392,9 +392,9 @@ namespace PIHelperSh.PdfCreater.Implements
         }
 
         /// <summary>
-        /// Создаёт круговую диаграму.
+        /// Создаёт круговую диаграмму.
         /// </summary>
-        /// <param name="pieChart">Модель для круговой диаграмы</param>
+        /// <param name="pieChart">Модель для круговой диаграммы</param>
         public void AddChart(PdfPieChartModel pieChart)
         {
             if (_document == null)
@@ -428,7 +428,7 @@ namespace PIHelperSh.PdfCreater.Implements
         public void AddImage(PdfImage img)
         {
             if (_section == null) return;
-            var paragraph = _section.AddParagraph();//Это некоторый костыли. Видете ли, у изображения настроить выравнивание - это очень непросто. А вот так вот - можно
+            var paragraph = _section.AddParagraph();//Это некоторый костыли. у изображения настроить выравнивание - это очень непросто. А вот так вот - можно
             var image = paragraph.AddImage(img.Image.GetImageForMigraDoc());
 
             if (img.Width.HasValue) image.Width = img.Width.Value;

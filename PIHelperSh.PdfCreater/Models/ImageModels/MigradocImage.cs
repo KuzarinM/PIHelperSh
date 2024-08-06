@@ -43,7 +43,7 @@ namespace PIHelperSh.PdfCreater.Models.ImageModels
         /// <summary>
         /// Создания изображения из строки base64
         /// </summary>
-        /// <param name="base64">изобращение в формате base64</param>
+        /// <param name="base64">изображение в формате base64</param>
         /// <returns></returns>
         public static MigradocImage CreateFromBase64(string base64) => new MigradocImage { _b64Source = $"base64:{base64}" };
 

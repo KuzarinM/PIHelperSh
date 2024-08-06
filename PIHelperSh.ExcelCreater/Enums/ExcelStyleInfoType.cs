@@ -1,16 +1,11 @@
 ﻿using PIHelperSh.Core.Attributes;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace PIHelperSh.ExcelCreater.Enums
+namespace PIHelperSh.ExcelCreator.Enums
 {
-    /// <summary>
-    /// Данное перечисление отвечает за тип текста(настройки шрифта и позиционирования)
-    /// </summary>
-    public enum ExcelStyleInfoType
+	/// <summary>
+	/// Данное перечисление отвечает за тип текста(настройки шрифта и позиционирования)
+	/// </summary>
+	public enum ExcelStyleInfoType
     {
         /// <summary>
         /// Заголовок. По центру и Жирно

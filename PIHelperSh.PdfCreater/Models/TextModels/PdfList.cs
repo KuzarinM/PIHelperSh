@@ -14,7 +14,7 @@ namespace PIHelperSh.PdfCreater.Models.TextModels
     public class PdfList : IPdfElement
     {
         /// <summary>
-        /// Элементы списка (параграфы или иные спсики)
+        /// Элементы списка (параграфы или иные списки)
         /// </summary>
         public List<IPdfElement> Content { get; set; } = new();
 

@@ -24,7 +24,7 @@ namespace PIHelperSh.PdfCreater.Interfases
         public void AddParagraph(PdfParagraph paragraph);
 
         /// <summary>
-        /// Создаём маркерованный список
+        /// Создаём маркированный список
         /// </summary>
         /// <param name="List">Модель списка(может быть многоуровневым). Max - 3 уровня</param>
         public void AddList(PdfList List);
@@ -32,14 +32,14 @@ namespace PIHelperSh.PdfCreater.Interfases
         /// <summary>
         /// Создаёт таблицу, с шапкой из 2-х строк(с группировками)
         /// </summary>
-        /// <typeparam name="T">Тип DTO, из которой берё=утся данные в таблицу</typeparam>
+        /// <typeparam name="T">Тип DTO, из которой берутся данные в таблицу</typeparam>
         /// <param name="header">Модель самой таблицы</param>
         public void AddTable<T>(PdfTable<T> header, bool rowHeaded = false);
 
         /// <summary>
-        /// Создаёт круговую диаграму.
+        /// Создаёт круговую диаграмму.
         /// </summary>
-        /// <param name="pieChart">Модель для круговой диаграмы</param>
+        /// <param name="pieChart">Модель для круговой диаграммы</param>
         public void AddChart(PdfPieChartModel pieChart);
 
         /// <summary>
