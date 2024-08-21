@@ -5,6 +5,12 @@ namespace PIHelperSh.Core.Extensions
 {
 	public static class EnumExtension
 	{
+		/// <summary>
+		/// Получить значение из перечисления. Если такогового не найдено - вернётся default(T)
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="value"></param>
+		/// <returns></returns>
 		public static T GetValue<T>(this Enum value)
 		{
 			Type type = value.GetType();
@@ -20,6 +26,12 @@ namespace PIHelperSh.Core.Extensions
 			return default;
 		}
 
+		/// <summary>
+		/// Создание объекта перечисления из зрачения. Если такового нет, то вернётся default(T)
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="target"></param>
+		/// <returns></returns>
 		public static T CreateEnumFromValue<T>(this object target) where T : Enum
 		{
 			var targetType = typeof(TypeValueAttribute<>).MakeGenericType(target.GetType());

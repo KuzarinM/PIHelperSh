@@ -4,6 +4,12 @@ namespace PIHelperSh.Core.Extensions
 {
 	public static class SimpleExtension
 	{
+		/// <summary>
+		/// "Умножение" строк
+		/// </summary>
+		/// <param name="str"></param>
+		/// <param name="count"></param>
+		/// <returns></returns>
 		public static string Multiply(this string str, int count)
 		{
 			StringBuilder sb = new StringBuilder(str.Length * count);
@@ -14,6 +20,12 @@ namespace PIHelperSh.Core.Extensions
 			return sb.ToString();
 		}
 
+		/// <summary>
+		/// Целочисленная положительная степень
+		/// </summary>
+		/// <param name="a"></param>
+		/// <param name="b"></param>
+		/// <returns></returns>
 		public static int PowInt(int a, int b)
 		{
 			if (b == 0)
@@ -27,6 +39,11 @@ namespace PIHelperSh.Core.Extensions
 				return res * res * a;
 		}
 
-		public static bool IsNullOrEmpty(this string str) => string.IsNullOrEmpty(str);
+        /// <summary>
+        /// Обёртка над string.IsNullOrEmpty
+        /// </summary>
+        /// <param name="str"></param>
+        /// <returns></returns>
+        public static bool IsNullOrEmpty(this string str) => string.IsNullOrEmpty(str);
 	}
 }

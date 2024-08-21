@@ -11,8 +11,21 @@ namespace PIHelperSh.Core.Extensions
 {
     public static class ComparationExtension
     {
+        /// <summary>
+        /// Метод кастомного сравнения
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="source"></param>
+        /// <param name="target"></param>
+        /// <returns></returns>
         public static bool Compare<T>(this T source, T target) => Compare((object?)source, (object?)target);
 
+        /// <summary>
+        /// Метод кастомного сравнения
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="target"></param>
+        /// <returns></returns>
         public static bool Compare(this object? source, object? target)
         {
             if(source == null || target == null) 
@@ -37,18 +50,18 @@ namespace PIHelperSh.Core.Extensions
                 {
                     var custom = x.GetCustomAttribute<CustomComparationAttribute>();
 
-                    if (custom == null || custom.Mode == CustiomComparationMode.Default)
+                    if (custom == null || custom.Mode == CustiomComparationMode.Default || custom.Mode == CustiomComparationMode.Comparator)//todo последнее удалить и доделать
                         return Compare(x.GetValue(source), x.GetValue(target));
                     switch (custom.Mode)
                     {
                         case CustiomComparationMode.Ignore:
                             return true;
-                        case CustiomComparationMode.Comparator:
-                            var a = x.GetValue(source);
-                            var b = x.GetValue(target);
-                            if (a == null || b == null)
-                                return false;
-                            return custom.Comparer(a, b);
+                        //case CustiomComparationMode.Comparator:
+                        //    var a = x.GetValue(source);
+                        //    var b = x.GetValue(target);
+                        //    if (a == null || b == null)
+                        //        return false;
+                        //    return custom.Comparer(a, b);
                         case CustiomComparationMode.Equals:
                             return object.Equals(x.GetValue(source), x.GetValue(target));
                     }
@@ -58,18 +71,18 @@ namespace PIHelperSh.Core.Extensions
                 {
                     var custom = x.GetCustomAttribute<CustomComparationAttribute>();
 
-                    if (custom == null || custom.Mode == CustiomComparationMode.Default)
+                    if (custom == null || custom.Mode == CustiomComparationMode.Default || custom.Mode == CustiomComparationMode.Comparator)//todo последнее удалить и доделать
                         return Compare(x.GetValue(source), x.GetValue(target));
                     switch (custom.Mode)
                     {
                         case CustiomComparationMode.Ignore:
                             return true;
-                        case CustiomComparationMode.Comparator:
-                            var a = x.GetValue(source);
-                            var b = x.GetValue(target);
-                            if(a == null || b == null)
-                                return false;
-                            return custom.Comparer(a,b);
+                        //case CustiomComparationMode.Comparator:
+                        //    var a = x.GetValue(source);
+                        //    var b = x.GetValue(target);
+                        //    if(a == null || b == null)
+                        //        return false;
+                        //    return custom.Comparer(a,b);
                         case CustiomComparationMode.Equals:
                             return object.Equals(x.GetValue(source), x.GetValue(target));
                     }

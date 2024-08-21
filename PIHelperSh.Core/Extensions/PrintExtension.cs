@@ -5,6 +5,11 @@ namespace PIHelperSh.Core.Extensions
 {
 	public static class PrintExtension
 	{
+		/// <summary>
+		/// Превращает объект в некоторое подобие json для отладки и тестирования
+		/// </summary>
+		/// <param name="obj"></param>
+		/// <returns></returns>
 		public static string toText(this object obj) => Print(obj, 0);
 
 		private static string Print(object obj, int level)
