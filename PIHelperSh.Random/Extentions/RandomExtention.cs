@@ -12,15 +12,42 @@ namespace PIHelperSh.RandomEx.Extentions
         private const string letters = "AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890 ";
 
         #region Получение из массива
+        /// <summary>
+        /// Получение из массива случайного элемента
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="rnd"></param>
+        /// <param name="list"></param>
+        /// <returns></returns>
         public static T NextItem<T>(this Random rnd, List<T> list) => list[rnd.Next(0, list.Count)];
 
+        /// <summary>
+        ///  Получение из массива случайного элемента
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="rnd"></param>
+        /// <param name="array"></param>
+        /// <returns></returns>
         public static T NextItem<T>(this Random rnd, T[] array) => array[rnd.Next(0, array.Length)];
 
+        /// <summary>
+        /// Получение случайного символа строки
+        /// </summary>
+        /// <param name="rnd"></param>
+        /// <param name="str"></param>
+        /// <returns></returns>
         public static char NextItem(this Random rnd, string str) => str[rnd.Next(0, str.Length)];
 
         #endregion
 
         #region Перемешивание массива
+        /// <summary>
+        /// Метод перемешивания массива
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="rnd"></param>
+        /// <param name="list"></param>
+        /// <returns></returns>
         public static List<T> Shuffle<T>(this Random rnd, List<T> list)
         {
             var count = list.Count;
@@ -34,6 +61,13 @@ namespace PIHelperSh.RandomEx.Extentions
             return list;
         }
 
+        /// <summary>
+        /// Метод перемешивания массива
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="rnd"></param>
+        /// <param name="list"></param>
+        /// <returns></returns>
         public static T[] Shuffle<T>(this Random rnd, T[] list)
         {
             var count = list.Length;
@@ -49,6 +83,12 @@ namespace PIHelperSh.RandomEx.Extentions
 
         #endregion
 
+        /// <summary>
+        /// Формирования случайной строки по паттерну, чем-то схожему с языком регулярных выражений
+        /// </summary>
+        /// <param name="rnd"></param>
+        /// <param name="regex"></param>
+        /// <returns></returns>
         public static string NextString(this Random rnd, string regex)
         {
 
@@ -97,7 +137,7 @@ namespace PIHelperSh.RandomEx.Extentions
                             if (number.Length > 0)//Если какая-то цифра есть
                                 minCount = maxCount = int.Parse(number.ToString());
                             else//Иначе будет единица
-                                minCount = minCount = 1;
+                                minCount = maxCount = 1;
                         }
 
                         for (int j = 0; j < rnd.Next(minCount, maxCount + 1); j++)
@@ -141,6 +181,12 @@ namespace PIHelperSh.RandomEx.Extentions
             return sb.ToString();
         }
 
+        /// <summary>
+        /// Получение случайной строки из букв англиского алфавита обоих регистров, цифр и пробела
+        /// </summary>
+        /// <param name="rnd"></param>
+        /// <param name="len">Длина строки</param>
+        /// <returns></returns>
         public static string NextString(this Random rnd, int len)
         {
             StringBuilder sb = new StringBuilder();
@@ -151,9 +197,19 @@ namespace PIHelperSh.RandomEx.Extentions
             return sb.ToString();
         }
 
+        /// <summary>
+        /// Получение случайного цвета
+        /// </summary>
+        /// <param name="rnd"></param>
+        /// <returns></returns>
         public static Color NextColor(this Random rnd) => 
             Color.FromArgb(rnd.Next(0, 255), rnd.Next(0, 255), rnd.Next(0, 255), rnd.Next(0, 255));
 
+        /// <summary>
+        /// Получение случайного цвета из списка уже существующих
+        /// </summary>
+        /// <param name="rnd"></param>
+        /// <returns></returns>
         public static Color NextExistColor(this Random rnd)
         {
             var vars = Enum.GetValues<KnownColor>();
