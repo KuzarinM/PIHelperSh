@@ -114,6 +114,11 @@ namespace PIHelperSh.PdfCreator
             style.ParagraphFormat.TabStops.ClearAll();
             style.ParagraphFormat.TabStops.AddTabStop(Unit.FromCentimeter(4.5), TabAlignment.Left);
             #endregion
+
+            #region Мелкий шрифт
+            style = document.Styles.AddStyle("NormalSmall", "Normal");
+            style.Font.Size = 11;
+            #endregion
         }
 
         private Paragraph? MakeParagraph(PdfParagraph pdfParagraph)
@@ -252,6 +257,51 @@ namespace PIHelperSh.PdfCreator
             return objectFields;
         }
 
+        private void MakeSimpleTableHeader(Table table, PDFSimpleTable header)
+        {
+            foreach (var item in header.Header)
+            {
+                if (item is PdfTableColumnGroup group)
+                {
+                    group.InnerColumns.ForEach(x => table.AddColumn(Unit.FromCentimeter(x.Size.Value)));
+                }
+                else
+                {
+                    table.AddColumn(Unit.FromCentimeter(item.Size.Value));
+                }
+            }
+
+            Row upRow = table.AddRow();
+            Row downRow = table.AddRow();
+            upRow.HeadingFormat = downRow.HeadingFormat = true;
+            upRow.Format.Font.Bold = downRow.Format.Font.Bold = true;
+
+            int upColumn = 0;
+            int downColumn = 0;
+
+
+            foreach (var item in header.Header)
+            {
+                if (item is PdfTableColumnGroup group)
+                {
+                    ConfigurateCell(upRow.Cells[upColumn], group.Title, header.HeaderHorisontalAlignment, header.HeaderStyle, rightMerge: group.InnerColumns.Count - 1);
+                    upColumn += group.InnerColumns.Count;
+                    foreach (var ic in group.InnerColumns)
+                    {
+                        ConfigurateCell(downRow.Cells[downColumn], ic.Title, header.HeaderHorisontalAlignment, header.HeaderStyle);
+                        downColumn++;
+                    }
+                }
+                else
+                {
+                    ConfigurateCell(upRow.Cells[upColumn], item.Title, header.HeaderHorisontalAlignment, header.HeaderStyle, downMerge: 1);
+                    ConfigurateCell(downRow.Cells[downColumn], item.Title, header.HeaderHorisontalAlignment, header.HeaderStyle);
+                    upColumn++;
+                    downColumn++;
+                }
+            }
+        }
+
         private void MakeTableWithHederInRow<T>(Table table, PdfTable<T> header)
         {
             for (int i = 0; i < header.Records.Count + 2; i++)
@@ -385,6 +435,40 @@ namespace PIHelperSh.PdfCreator
                 }
             }
 
+        }
+
+        /// <summary>
+        /// Создаёт табличку, наподобие той, что с T, но проще
+        /// </summary>
+        /// <param name="tableData"></param>
+        public void AddSimpleTable(PDFSimpleTable tableData)
+        {
+            if (_document == null)
+            {
+                return;
+            }
+
+            if (tableData.ChangePageOrientation)
+            {
+                _section.PageSetup.Orientation = Orientation.Landscape;
+                _section.PageSetup.LeftMargin = 10;
+                _section.PageSetup.BottomMargin = 5;
+            }
+
+            var table = _document.LastSection.AddTable();
+
+            MakeSimpleTableHeader(table, tableData);
+
+            foreach (var item in tableData.Rows)
+            {
+                var row = table.AddRow();
+
+                for (int i = 0; i < item.Items.Count; i++)
+                {
+                    ConfigurateCell(row.Cells[i], item.Items[i], item.Alignment ?? tableData.RowHorisontalAlignment, item.Style ?? tableData.RowStyle);
+                }
+            }
+            if (tableData.MarginAfter != PdfMargin.None) table.Format.SpaceAfter = tableData.MarginAfter.GetValue<string>();
         }
 
         /// <summary>

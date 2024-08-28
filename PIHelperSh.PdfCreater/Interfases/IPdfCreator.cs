@@ -31,6 +31,13 @@ namespace PIHelperSh.PdfCreator.Interfases
         /// <param name="header">Модель самой таблицы</param>
         public void AddTable<T>(PdfTable<T> header, bool rowHeaded = false);
 
+
+        /// <summary>
+        /// Создаёт табличку, наподобие той, что с T, но проще
+        /// </summary>
+        /// <param name="tableData"></param>
+        public void AddSimpleTable(PDFSimpleTable tableData);
+
         /// <summary>
         /// Создаёт круговую диаграмму.
         /// </summary>

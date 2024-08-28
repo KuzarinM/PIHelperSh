@@ -44,6 +44,11 @@ namespace PIHelperSh.PdfCreator.Enums
         /// Жирный шрифт
         /// </summary>
         [TypeValue<string>("NormalBold")]
-        Bold
+        Bold,
+        /// <summary>
+        /// Мелкий шрифт
+        /// </summary>
+        [TypeValue<string>("NormalSmall")]
+        Small
     }
 }

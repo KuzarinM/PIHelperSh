@@ -9,6 +9,7 @@
  - **MemoryStream SavePdf()** данный метод сохраняет PDF документ и возвращает поток данных файла.
  - **SavePdf(string filename)** данный метод сохраняет PDF документ на диске по пути из filename
  - **AddTable\<T>(PdfTable\<T> header, bool rowHeaded = false)** данный метод позволяет добавлять на лист таблицу с шапкой и значениями. **rowHeaded** позволяет описать будет ли шапка в строках или в столбцах.
+ - **AddSimpleTable(PDFSimpleTable tableData)** данный метод позволяет добавть на лист простую табличку, строки в которой задаются пользователем самостоятельно.
  ## Основные модели
  ### PdfParagraph 
  Модель имеет следующие поля:
@@ -21,6 +22,7 @@
 	- *ListLevel1*:  Times New Roman 14 отступ 1.5cm
 	- *ListLevel2*: Times New Roman 14 отступ 3.0cm
 	- *ListLevel3*: Times New Roman 14 отступ 4.5cm
+	- *Small*: Times New Roman 11
  - **string Text** - Текст параграфа
 ### PdfList 
 Данная модель позволяет создать многоуровневый список. 
@@ -70,3 +72,16 @@
  Поля:
  - **string? Title** - заголовок этой группы
  - **List\<PdfTableColumn> InnerColumns** - внутренние столбцы/строки
+ ### PDFSimpleTable
+ - **List<IPdfColumnItem>? Header** - Заголовок таблицы. Уже был ранее описан
+ - **PdfStyleType HeaderStyle** - Стиль заголовка таблицы. По умолчанию - Bold
+ - **PdfAlignmentType HeaderHorisontalAlignment**  - Выравнивание текста внутри заголовков. По умолчанию - по центру
+ - **List<PDFSimpleTableRow> Rows** - непосредственно строки таблицы
+ - **PdfStyleType RowStyle** - ситль текста таблицы по умолчанию. Может быть переопределён в каждой строке
+ - **PdfAlignmentType RowHorisontalAlignment** - выравнивание текста строки таблицы по умолчанию. Может быть переопределён
+ - **PdfMargin MarginAfter** - Отступ после. По умолчанию None
+ - **bool ChangePageOrientation** - флаг, меняем ли мы ориентацию листа на альбомную
+### PDFSimpleTableRow
+ - **List<string>** Items - элементы строки таблицы
+ - **PdfStyleType? Style** - возможность переопределить стиль данной строки. Если Null - берётся стиль по умолчанию
+ - **PdfAlignmentType? Alignment** - возможность переопределить выравниваение данной строки. Если Null - берётся стиль по умолчанию
