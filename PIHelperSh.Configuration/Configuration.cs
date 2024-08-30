@@ -21,9 +21,10 @@ namespace PIHelperSh.Configuration
         /// <returns></returns>
         public static IServiceCollection ConfigureWithENV<T>(this IServiceCollection services, IConfiguration configuration) where T : class
         {
-            IConfigurationSection section = configuration.GetSection(typeof(T).Name) 
-                ?? configuration.GetSection(typeof(T).Name.Replace("Configuration","")) 
-                ?? throw new ArgumentException(nameof(T));
+            IConfigurationSection section = configuration.GetSection(typeof(T).Name);
+
+            if (configuration.GetSection(typeof(T).Name.Replace("Configuration", "")).Exists())
+                section = configuration.GetSection(typeof(T).Name.Replace("Configuration", ""));
 
             Type type = typeof(T);
             var defaultValue = type.GetConstructor(Type.EmptyTypes)!.Invoke(Type.EmptyTypes);
@@ -33,6 +34,8 @@ namespace PIHelperSh.Configuration
                 bool flag = false;
 
                 string? value = section![field.Name] ?? null;
+
+
                 foreach (var attrubute in field!.GetCustomAttributes<FromEnvironmentAttribute>())
                 {
                     if (attrubute == null)
@@ -48,10 +51,9 @@ namespace PIHelperSh.Configuration
                     value = Environment.GetEnvironmentVariable(variableName) ?? value;
                 }
 
-                if (flag) //На случай, если никто не повесил анотацию для конфигурации с ENV. 
+                if (!flag) //На случай, если никто не повесил анотацию для конфигурации с ENV. 
                     value = Environment.GetEnvironmentVariable($"{type.Name.ToConstantCase()}_{field.Name.ToConstantCase()}") ?? value;
                 
-
                 if (string.IsNullOrEmpty(value))
                     value = field.GetValue(defaultValue)?.ToString();
                 
