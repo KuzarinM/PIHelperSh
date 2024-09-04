@@ -1,17 +1,15 @@
 ﻿using PIHelperSh.ExcelCreator.Enums;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PIHelperSh.ExcelCreator.Models
 {
-    //Ячейка Excel c содержимым. При создании обязательно необходимо определить ячейку(Cell) и Text. При необходимости объединения ячеек, нужно лишь заполнить EndCell(по умолчанию null)
+    /// <summary>
+    /// Ячейка Excel c содержимым. При создании обязательно необходимо определить ячейку(Cell) и Text. 
+    /// При необходимости объединения ячеек, нужно лишь заполнить EndCell(по умолчанию null)
+    /// </summary>
     public class ExcelCellParameters
     {
         /// <summary>
-        /// Ячейка, куда пишем(начало диапозона объединения в случае, если таковое необходимо)
+        /// Ячейка, куда пишем(начало диапазона объединения в случае, если таковое необходимо)
         /// </summary>
         public ExcelCell Cell { get; set; } = new();
 
@@ -30,6 +28,9 @@ namespace PIHelperSh.ExcelCreator.Models
         /// </summary>
         public ExcelCell? EndCell { get; set; } = null;
 
+        /// <summary>
+        /// Полное имя ячейки
+        /// </summary>
         public string CellReference => Cell.CellReference;
     }
 }

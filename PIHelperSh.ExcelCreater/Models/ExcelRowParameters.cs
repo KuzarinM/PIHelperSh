@@ -10,7 +10,7 @@ namespace PIHelperSh.ExcelCreator.Models
         /// <summary>
         /// Список строк, который будут последовательно выведены в ячейки
         /// </summary>
-        public List<string> CellsTexts { get; set; } = new();
+        public IEnumerable<object> CellsValues { get; set; } = [];
 
         /// <summary>
         /// Общее стилистическое оформление строки
