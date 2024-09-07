@@ -21,7 +21,7 @@ namespace PIHelperSh.PdfCreator.Enums
         /// Отступ небольшой
         /// </summary>
         [TypeValue<string>("0.3cm")]
-        Smal,
+        Small,
         /// <summary>
         /// Отступ средний
         /// </summary>

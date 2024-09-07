@@ -41,7 +41,7 @@ namespace PIHelperSh.PdfCreator.Models.TableModels
         /// <summary>
         /// Базовое выравнивание элементов сторок
         /// </summary>
-        public PdfAlignmentType RowHorisontalAlignment = PdfAlignmentType.Rigth;
+        public PdfAlignmentType RowHorisontalAlignment = PdfAlignmentType.Right;
 
         /// <summary>
         /// Отступ после таблицы
