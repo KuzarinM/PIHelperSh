@@ -35,7 +35,7 @@ namespace PIHelperSh.PdfCreator
         }
 
         #region Внутренние методы
-        private static string GetListLavel(int level)
+        private static string GetListLevel(int level)
         {
             try
             {
@@ -47,7 +47,7 @@ namespace PIHelperSh.PdfCreator
             }
         }
 
-        private void ConfigurateChartLegend(Chart chart, PdfLegendPosition position)
+        private void ConfigureChartLegend(Chart chart, PdfLegendPosition position)
         {
             switch (position)
             {
@@ -143,7 +143,7 @@ namespace PIHelperSh.PdfCreator
                         continue;
 
                     paragraph.Format.SpaceAfter = "0.3cm";
-                    paragraph.Style = GetListLavel(level);
+                    paragraph.Style = GetListLevel(level);
                     last = paragraph;
                 }
                 else if (element is PdfList ls)
@@ -154,14 +154,14 @@ namespace PIHelperSh.PdfCreator
             return last;
         }
 
-        private void ConfigurateParagraph(Paragraph paragraph, PdfParagraph properties)
+        private void ConfigureParagraph(Paragraph paragraph, PdfParagraph properties)
         {
             paragraph.Format.Alignment = properties.ParagraphAlignment.GetValue<ParagraphAlignment>(); ;
             if (properties.MarginAfter != PdfMargin.None) paragraph.Format.SpaceAfter = properties.MarginAfter.GetValue<string>();
             paragraph.Style = properties.Style.GetValue<string>();
         }
 
-        private void ConfigurateCell(Cell cell, string text, PdfAlignmentType alignment, PdfStyleType style, int? rightMerge = null, int? downMerge = null, bool dcw = false)
+        private void ConfigureCell(Cell cell, string text, PdfAlignmentType alignment, PdfStyleType style, int? rightMerge = null, int? downMerge = null, bool dcw = false)
         {
             if (rightMerge.HasValue) cell.MergeRight = rightMerge.Value;
             if (downMerge.HasValue)
@@ -171,7 +171,7 @@ namespace PIHelperSh.PdfCreator
             }
 
             Paragraph paragraph = cell.AddParagraph(text);
-            ConfigurateParagraph(paragraph, new()
+            ConfigureParagraph(paragraph, new()
             {
                 ParagraphAlignment = alignment,
                 Style = style,
@@ -235,19 +235,19 @@ namespace PIHelperSh.PdfCreator
             {
                 if (item is PdfTableColumnGroup group)
                 {
-                    ConfigurateCell(upRow.Cells[upColumn], group.Title, header.HeaderHorisontalAlignment, header.HeaderStyle, rightMerge: group.InnerColumns.Count - 1);
+                    ConfigureCell(upRow.Cells[upColumn], group.Title, header.HeaderHorisontalAlignment, header.HeaderStyle, rightMerge: group.InnerColumns.Count - 1);
                     upColumn += group.InnerColumns.Count;
                     foreach (var ic in group.InnerColumns)
                     {
-                        ConfigurateCell(downRow.Cells[downColumn], ic.Title, header.HeaderHorisontalAlignment, header.HeaderStyle);
+                        ConfigureCell(downRow.Cells[downColumn], ic.Title, header.HeaderHorisontalAlignment, header.HeaderStyle);
                         objectFields.Add(GetGetter(fields, prop, ic.PropertyName));
                         downColumn++;
                     }
                 }
                 else
                 {
-                    ConfigurateCell(upRow.Cells[upColumn], item.Title, header.HeaderHorisontalAlignment, header.HeaderStyle, downMerge: 1);
-                    ConfigurateCell(downRow.Cells[downColumn], item.Title, header.HeaderHorisontalAlignment, header.HeaderStyle);
+                    ConfigureCell(upRow.Cells[upColumn], item.Title, header.HeaderHorisontalAlignment, header.HeaderStyle, downMerge: 1);
+                    ConfigureCell(downRow.Cells[downColumn], item.Title, header.HeaderHorisontalAlignment, header.HeaderStyle);
                     objectFields.Add(GetGetter(fields, prop, ((PdfTableColumn)item).PropertyName));
                     upColumn++;
                     downColumn++;
@@ -284,25 +284,25 @@ namespace PIHelperSh.PdfCreator
             {
                 if (item is PdfTableColumnGroup group)
                 {
-                    ConfigurateCell(upRow.Cells[upColumn], group.Title, header.HeaderHorisontalAlignment, header.HeaderStyle, rightMerge: group.InnerColumns.Count - 1);
+                    ConfigureCell(upRow.Cells[upColumn], group.Title, header.HeaderHorisontalAlignment, header.HeaderStyle, rightMerge: group.InnerColumns.Count - 1);
                     upColumn += group.InnerColumns.Count;
                     foreach (var ic in group.InnerColumns)
                     {
-                        ConfigurateCell(downRow.Cells[downColumn], ic.Title, header.HeaderHorisontalAlignment, header.HeaderStyle);
+                        ConfigureCell(downRow.Cells[downColumn], ic.Title, header.HeaderHorisontalAlignment, header.HeaderStyle);
                         downColumn++;
                     }
                 }
                 else
                 {
-                    ConfigurateCell(upRow.Cells[upColumn], item.Title, header.HeaderHorisontalAlignment, header.HeaderStyle, downMerge: 1);
-                    ConfigurateCell(downRow.Cells[downColumn], item.Title, header.HeaderHorisontalAlignment, header.HeaderStyle);
+                    ConfigureCell(upRow.Cells[upColumn], item.Title, header.HeaderHorisontalAlignment, header.HeaderStyle, downMerge: 1);
+                    ConfigureCell(downRow.Cells[downColumn], item.Title, header.HeaderHorisontalAlignment, header.HeaderStyle);
                     upColumn++;
                     downColumn++;
                 }
             }
         }
 
-        private void MakeTableWithHederInRow<T>(Table table, PdfTable<T> header)
+        private void MakeTableWithHeaderInRow<T>(Table table, PdfTable<T> header)
         {
             for (int i = 0; i < header.Records.Count + 2; i++)
             {
@@ -318,19 +318,19 @@ namespace PIHelperSh.PdfCreator
                 Row row = table.AddRow();
                 if (item is PdfTableColumnGroup group)
                 {
-                    ConfigurateCell(row.Cells[0], group.Title!, header.HeaderHorisontalAlignment, header.HeaderStyle, downMerge: group.InnerColumns.Count - 1, dcw: true);
+                    ConfigureCell(row.Cells[0], group.Title!, header.HeaderHorisontalAlignment, header.HeaderStyle, downMerge: group.InnerColumns.Count - 1, dcw: true);
                     foreach (var innerParam in group.InnerColumns)
                     {
                         if (row == null) row = table.AddRow();//Первая(а точнее вторая) часть костыля с первой строкой
                         row.HeightRule = RowHeightRule.Exactly;
                         row.Height = Unit.FromCentimeter(innerParam.Size.Value);//Устанавливаем высоту строки. Так просили...
 
-                        ConfigurateCell(row.Cells[1], innerParam.Title!, header.HeaderHorisontalAlignment, header.HeaderStyle, dcw: true);
+                        ConfigureCell(row.Cells[1], innerParam.Title!, header.HeaderHorisontalAlignment, header.HeaderStyle, dcw: true);
 
                         Func<object?, object?> getter = GetGetter(fields, props, innerParam.PropertyName);
                         for (int i = 0; i < header.Records.Count; i++)
                         {
-                            ConfigurateCell(row.Cells[i + 2], getter(header.Records[i]).ToString(), header.RecordHorisontalAlignment, header.RecordStyle, dcw: true);
+                            ConfigureCell(row.Cells[i + 2], getter(header.Records[i]).ToString(), header.RecordHorisontalAlignment, header.RecordStyle, dcw: true);
                         }
                         row = null; //Это небольшой костыль, который позволяет не создавать новую строчку в самый первый раз(т.к. она же есть)
                     }
@@ -339,24 +339,24 @@ namespace PIHelperSh.PdfCreator
                 {
                     row.HeightRule = RowHeightRule.Exactly;
                     row.Height = Unit.FromCentimeter(column.Size.Value);
-                    ConfigurateCell(row.Cells[0], column.Title!, header.HeaderHorisontalAlignment, header.HeaderStyle, rightMerge: 1, dcw: true);
+                    ConfigureCell(row.Cells[0], column.Title!, header.HeaderHorisontalAlignment, header.HeaderStyle, rightMerge: 1, dcw: true);
 
                     Func<object?, object?> getter = GetGetter(fields, props, column.PropertyName);
                     for (int i = 0; i < header.Records.Count; i++)
                     {
-                        ConfigurateCell(row.Cells[i + 2], getter(header.Records[i]).ToString(), header.RecordHorisontalAlignment, header.RecordStyle, dcw: true);
+                        ConfigureCell(row.Cells[i + 2], getter(header.Records[i]).ToString(), header.RecordHorisontalAlignment, header.RecordStyle, dcw: true);
                     }
                 }
             }
         }
 
-        private void ConfiguratePieChart(Chart chart, PdfPieChartModel pieChart)
+        private void ConfigurePieChart(Chart chart, PdfPieChartModel pieChart)
         {
             chart.Width = Unit.FromCentimeter(pieChart.Width);
             chart.Height = Unit.FromCentimeter(pieChart.Height);
 
             Paragraph p = chart.HeaderArea.AddParagraph(pieChart.ChartName);
-            ConfigurateParagraph(p, new()
+            ConfigureParagraph(p, new()
             {
                 Style = pieChart.HeaderStyle,
                 ParagraphAlignment = pieChart.HeaderAlignment,
@@ -364,7 +364,7 @@ namespace PIHelperSh.PdfCreator
             });
 
             chart.LineFormat.Visible = true;
-            ConfigurateChartLegend(chart, pieChart.LegendPosition);
+            ConfigureChartLegend(chart, pieChart.LegendPosition);
             chart.DataLabel.Position = DataLabelPosition.OutsideEnd;
         }
 
@@ -380,7 +380,16 @@ namespace PIHelperSh.PdfCreator
             if (paragraph == null)
                 return;
 
-            ConfigurateParagraph(paragraph, pdfParagraph);
+            ConfigureParagraph(paragraph, pdfParagraph);
+        }
+        
+        /// <summary>
+        /// Создаём разрыв страницы
+        /// </summary>
+        /// <param name="pageBreak">Вставить разрыв страницы</param>
+        public void AddPageBreak()
+        {
+            _section?.AddPageBreak();
         }
 
         /// <summary>
@@ -413,25 +422,25 @@ namespace PIHelperSh.PdfCreator
             {
                 _section.PageSetup.Orientation = Orientation.Landscape;
                 _section.PageSetup.LeftMargin = 10;
-                MakeTableWithHederInRow(_document.LastSection.AddTable(), header);
+                MakeTableWithHeaderInRow(_document.LastSection.AddTable(), header);
                 return;
             }
 
             var table = _document.LastSection.AddTable();
             if (rowHeaded)
             {
-                MakeTableWithHederInRow(table, header);
+                MakeTableWithHeaderInRow(table, header);
                 return;
             }
 
-            var maper = MakeTableHeader(table, header);
+            var mapper = MakeTableHeader(table, header);
 
             foreach (var item in header.Records)
             {
                 var row = table.AddRow();
-                for (int i = 0; i < maper.Count; i++)
+                for (int i = 0; i < mapper.Count; i++)
                 {
-                    ConfigurateCell(row.Cells[i], maper[i](item)?.ToString(), header.RecordHorisontalAlignment, header.RecordStyle);
+                    ConfigureCell(row.Cells[i], mapper[i](item)?.ToString(), header.RecordHorisontalAlignment, header.RecordStyle);
                 }
             }
 
@@ -465,7 +474,7 @@ namespace PIHelperSh.PdfCreator
 
                 for (int i = 0; i < item.Items.Count; i++)
                 {
-                    ConfigurateCell(row.Cells[i], item.Items[i], item.Alignment ?? tableData.RowHorisontalAlignment, item.Style ?? tableData.RowStyle);
+                    ConfigureCell(row.Cells[i], item.Items[i], item.Alignment ?? tableData.RowHorisontalAlignment, item.Style ?? tableData.RowStyle);
                 }
             }
             if (tableData.MarginAfter != PdfMargin.None) table.Format.SpaceAfter = tableData.MarginAfter.GetValue<string>();
@@ -483,7 +492,7 @@ namespace PIHelperSh.PdfCreator
             }
 
             Chart chart = new Chart(ChartType.Pie2D);
-            ConfiguratePieChart(chart, pieChart);
+            ConfigurePieChart(chart, pieChart);
 
             Series series = chart.SeriesCollection.AddSeries();
             XSeries xseries = chart.XValues.AddXSeries();
