@@ -12,6 +12,7 @@ using MigraDoc.DocumentObjectModel.Shapes.Charts;
 using PIHelperSh.Core.Extensions;
 using PIHelperSh.PdfCreator.Interfases;
 using PIHelperSh.PdfCreator.Enums;
+using PIHelperSh.PdfCreator.Interfaces;
 using PIHelperSh.PdfCreator.Models.TableModels;
 using PIHelperSh.PdfCreator.Models.TextModels;
 using PIHelperSh.PdfCreator.Models.ImageModels;
