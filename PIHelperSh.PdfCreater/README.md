@@ -24,6 +24,7 @@
 	- *ListLevel3*: Times New Roman 14 отступ 4.5cm
 	- *Small*: Times New Roman 11
  - **string Text** - Текст параграфа
+ - **HyperlinkProperties Hyperlink** - Свойства гиперссылки. По умолчанию отсутствует
 ### PdfList 
 Данная модель позволяет создать многоуровневый список. 
  - **PdfMargin MarginAfter** - подробно описан ранее
