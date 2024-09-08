@@ -2,14 +2,8 @@
 using PIHelperSh.PdfCreator.Models.PiechartModel;
 using PIHelperSh.PdfCreator.Models.TableModels;
 using PIHelperSh.PdfCreator.Models.TextModels;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using MigraDoc.DocumentObjectModel;
 
-namespace PIHelperSh.PdfCreator.Interfases
+namespace PIHelperSh.PdfCreator.Interfaces
 {
     public interface IPdfCreator
     {
