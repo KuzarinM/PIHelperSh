@@ -27,6 +27,6 @@ namespace PIHelperSh.PdfCreator.Enums
         /// По правому краю
         /// </summary>
         [TypeValue<ParagraphAlignment>(ParagraphAlignment.Right)]
-        Rigth
+        Right
     }
 }

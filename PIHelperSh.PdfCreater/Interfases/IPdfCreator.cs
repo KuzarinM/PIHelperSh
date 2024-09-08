@@ -13,6 +13,12 @@ namespace PIHelperSh.PdfCreator.Interfases
     public interface IPdfCreator
     {
         /// <summary>
+        /// Создаём разрыв страницы
+        /// </summary>
+        /// <param name="pageBreak">Вставить разрыв страницы</param>
+        public void AddPageBreak();
+        
+        /// <summary>
         /// Создаём параграф
         /// </summary>
         /// <param name="paragraph">Модель параграфа, который вставляем</param>
