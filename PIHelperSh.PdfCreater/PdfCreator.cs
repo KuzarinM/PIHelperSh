@@ -12,10 +12,12 @@ using MigraDoc.DocumentObjectModel.Shapes.Charts;
 using PIHelperSh.Core.Extensions;
 using PIHelperSh.PdfCreator.Interfases;
 using PIHelperSh.PdfCreator.Enums;
+using PIHelperSh.PdfCreator.Interfaces;
 using PIHelperSh.PdfCreator.Models.TableModels;
 using PIHelperSh.PdfCreator.Models.TextModels;
 using PIHelperSh.PdfCreator.Models.ImageModels;
 using PIHelperSh.PdfCreator.Models.PiechartModel;
+using HyperlinkType = MigraDoc.DocumentObjectModel.HyperlinkType;
 
 namespace PIHelperSh.PdfCreator
 {
@@ -159,6 +161,12 @@ namespace PIHelperSh.PdfCreator
             paragraph.Format.Alignment = properties.ParagraphAlignment.GetValue<ParagraphAlignment>(); ;
             if (properties.MarginAfter != PdfMargin.None) paragraph.Format.SpaceAfter = properties.MarginAfter.GetValue<string>();
             paragraph.Style = properties.Style.GetValue<string>();
+
+            if (properties.Hyperlink is not null)
+            {
+                paragraph.AddHyperlink(properties.Hyperlink.Link, properties.Hyperlink.Type.GetValue<HyperlinkType>());
+                paragraph.AddFormattedText(properties.Text);
+            }
         }
 
         private void ConfigureCell(Cell cell, string text, PdfAlignmentType alignment, PdfStyleType style, int? rightMerge = null, int? downMerge = null, bool dcw = false)
@@ -377,12 +385,13 @@ namespace PIHelperSh.PdfCreator
         public void AddParagraph(PdfParagraph pdfParagraph)
         {
             var paragraph = MakeParagraph(pdfParagraph);
+            
             if (paragraph == null)
                 return;
 
             ConfigureParagraph(paragraph, pdfParagraph);
         }
-        
+
         /// <summary>
         /// Создаём разрыв страницы
         /// </summary>

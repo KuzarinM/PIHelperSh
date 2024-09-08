@@ -1,10 +1,6 @@
 ﻿using PIHelperSh.PdfCreator.Enums;
 using PIHelperSh.PdfCreator.Interfases;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using PIHelperSh.PdfCreator.Models.Properties;
 
 namespace PIHelperSh.PdfCreator.Models.TextModels
 {
@@ -32,5 +28,10 @@ namespace PIHelperSh.PdfCreator.Models.TextModels
         /// Отступ после параграфа (по умолчанию средний)
         /// </summary>
         public PdfMargin MarginAfter { get; set; } = PdfMargin.Medium;
+
+        /// <summary>
+        /// Свойства гиперссылки (по умолчанию отсутствует)
+        /// </summary>
+        public HyperlinkProperties? Hyperlink { get; set; }
     }
 }
