@@ -32,6 +32,6 @@ namespace PIHelperSh.PdfCreator.Models.TextModels
         /// <summary>
         /// Свойства гиперссылки (по умолчанию отсутствует)
         /// </summary>
-        public HyperlinkProperties Hyperlink { get; set; } = new();
+        public HyperlinkProperties? Hyperlink { get; set; }
     }
 }

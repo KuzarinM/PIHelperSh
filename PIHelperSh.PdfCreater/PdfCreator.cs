@@ -162,7 +162,7 @@ namespace PIHelperSh.PdfCreator
             if (properties.MarginAfter != PdfMargin.None) paragraph.Format.SpaceAfter = properties.MarginAfter.GetValue<string>();
             paragraph.Style = properties.Style.GetValue<string>();
 
-            if (properties.Hyperlink.Type != PIHyperlinkType.None)
+            if (properties.Hyperlink is not null)
             {
                 paragraph.AddHyperlink(properties.Hyperlink.Link, properties.Hyperlink.Type.GetValue<HyperlinkType>());
                 paragraph.AddFormattedText(properties.Text);
