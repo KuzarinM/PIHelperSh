@@ -10,17 +10,13 @@ namespace PIHelperSh.ExcelCreator.Helpers
 
         public static uint FromExcelFormat(string excelColumn)
         {
-            const uint alphabetStart = 'A';
-            const uint alphabetEnd = 'Z';
-            const uint alphabetLen = alphabetEnd - alphabetStart + 1;
-
             uint result = 0;
 
             foreach (char c in excelColumn)
             {
-                result = (result + 1) * alphabetLen;
+                result = (result + 1) * ALPHABET_LEN;
 
-                result += c - alphabetStart;
+                result += c - ALPHABET_START;
             }
 
             return result;
@@ -38,23 +34,6 @@ namespace PIHelperSh.ExcelCreator.Helpers
 
             result.Reverse();
             return string.Join("", result);
-        }
-
-        public static CellValues GetCellValueType(object value)
-        {
-            if (value.GetType() == typeof(int) || value.GetType() == typeof(decimal) || value.GetType() == typeof(double))
-                return CellValues.Number;
-
-            if (value.GetType() == typeof(bool))
-                return CellValues.Boolean;
-
-            if (value.GetType() == typeof(DateTime) || value.GetType() == typeof(DateTimeOffset))
-                return CellValues.Date;
-
-            if (value.GetType() == typeof(string))
-                return CellValues.SharedString;
-
-            throw new NotImplementedException("CellTypeValue undefined");
         }
     }
 }

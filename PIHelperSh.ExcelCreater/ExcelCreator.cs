@@ -305,16 +305,16 @@ namespace PIHelperSh.ExcelCreator
                 cell ??= targetRow.InsertAfter(new Cell() { CellReference = currentCell.CellReference }, preveousCell);
 
                 // Получаем данные для вставки
-                
-                var excelValue = (CellValue)typeof(CellValue).GetConstructor([item.GetType()])!.Invoke([item]);
+
+                var insertedValue = new ExcelCellValue(item); 
 
                 // вставляем новый текст
 
-                cell.DataType = CellHelper.GetCellValueType(item);
-                cell.CellValue = excelValue;
+                cell.DataType = insertedValue.Type;
+                cell.CellValue = insertedValue.Value;
                 cell.StyleIndex = excelRow.StyleInfo.GetValue<uint>();
 
-                _shareStringPart.SharedStringTable.AppendChild(new SharedStringItem(excelValue));
+                _shareStringPart.SharedStringTable.AppendChild(new SharedStringItem(insertedValue.Value));
                 _shareStringPart.SharedStringTable.Save();
 
                 preveousCell = cell;
