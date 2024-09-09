@@ -7,6 +7,7 @@ using PIHelperSh.Core.Extensions;
 using PIHelperSh.ExcelCreator.Enums;
 using PIHelperSh.ExcelCreator.Interfaces;
 using PIHelperSh.ExcelCreator.Models;
+using PIHelperSh.ExcelCreator.Helpers;
 
 namespace PIHelperSh.ExcelCreator
 {
@@ -15,14 +16,15 @@ namespace PIHelperSh.ExcelCreator
         private SpreadsheetDocument? _spreadsheetDocument;
         private SharedStringTablePart? _shareStringPart;
         private Worksheet? _worksheet;
-        private MemoryStream stream;
+        private readonly MemoryStream _stream;
 
         public ExcelCreator()
         {
-            stream = new MemoryStream();
+            _stream = new MemoryStream();
 
-            _spreadsheetDocument = SpreadsheetDocument.Create(stream, SpreadsheetDocumentType.Workbook);
+            _spreadsheetDocument = SpreadsheetDocument.Create(_stream, SpreadsheetDocumentType.Workbook);
             // Создаем книгу (в ней хранятся листы)
+
             var workbookpart = _spreadsheetDocument.AddWorkbookPart();
             workbookpart.Workbook = new Workbook();
 
@@ -34,10 +36,7 @@ namespace PIHelperSh.ExcelCreator
                 : _spreadsheetDocument.WorkbookPart.AddNewPart<SharedStringTablePart>();
 
             // Создаем SharedStringTable, если его нет
-            if (_shareStringPart.SharedStringTable == null)
-            {
-                _shareStringPart.SharedStringTable = new SharedStringTable();
-            }
+            _shareStringPart.SharedStringTable ??= new SharedStringTable();
 
             // Создаем лист в книгу
             var worksheetPart = workbookpart.AddNewPart<WorksheetPart>();
@@ -206,13 +205,14 @@ namespace PIHelperSh.ExcelCreator
 
             #endregion
         }
+       
         private void AddCellMergeBorder(ExcelMergeParameters merge, ExcelStyleInfoType style)
         {
             if (_worksheet == null || _shareStringPart == null) return;
             var sheetData = _worksheet.GetFirstChild<SheetData>();
             if (sheetData == null) return;
 
-            for (uint rowIndex = merge.CellFrom.Row; rowIndex <= merge.CellTo.Row; rowIndex++)
+            for (uint rowIndex = merge.CellFrom.ExcelRow; rowIndex <= merge.CellTo.ExcelRow; ++rowIndex)
             {
                 // Ищем строку, либо добавляем ее
                 Row? row = sheetData.Elements<Row>().Where(r => r.RowIndex! == rowIndex).FirstOrDefault();
@@ -222,54 +222,28 @@ namespace PIHelperSh.ExcelCreator
                     sheetData.Append(row);
                 }
 
-                string columnName = merge.CellFrom.Column;
-                Cell? preveous = null;
+                // Все ячейки должны быть последовательно друг за другом расположены
+                // нужно определить, после какой вставлять
+                Cell? preveousCell = 
+                    preveousCell = row
+                        .Elements<Cell>()
+                        .Last(rc => string.Compare(rc.CellReference!.Value, $"{merge.CellFrom.ExcelColumn}{rowIndex}", true) < 0);
 
-                // Ищем нужную ячейку  
-                Cell? cell = row.Elements<Cell>().Where(c => c.CellReference!.Value == $"{columnName}{rowIndex}").FirstOrDefault();
-                if (cell == null)
+                for (ExcelCell currElement = new (merge.CellFrom.ExcelColumn, rowIndex); currElement.Column <= merge.CellTo.Column; ++currElement.Column)
                 {
-                    // Все ячейки должны быть последовательно друг за другом расположены
-                    // нужно определить, после какой вставлять
-                    foreach (Cell rowCell in row.Elements<Cell>())
-                    {
-                        if (string.Compare(rowCell.CellReference!.Value, $"{columnName}{rowIndex}", true) > 0)
-                        {
-                            preveous = rowCell;
-                            break;
-                        }
-                    }
-                    var newCell = new Cell() { CellReference = $"{columnName}{rowIndex}" };
-                    row.InsertBefore(newCell, preveous);
+                    string cellReference = currElement.CellReference;
 
-                    cell = newCell;
-                }
-                cell.StyleIndex = style.GetValue<uint>();
-                preveous = cell;
-
-                //Цикл по столбцам. Через While - проще. + 1-я ячейка в строке будет обработана 2 раза.(не критично)
-                while (merge.isCollumnMerge)
-                {
                     // Ищем нужную ячейку  
-                    cell = row.Elements<Cell>().Where(c => c.CellReference!.Value == $"{columnName}{rowIndex}").FirstOrDefault();
-                    if (cell == null)
-                    {
-                        var newCell = new Cell() { CellReference = $"{columnName}{rowIndex}" };
-                        row.InsertAfter(newCell, preveous);
+                    Cell? cell = row.Elements<Cell>().Where(c => c.CellReference!.Value == cellReference).FirstOrDefault();
 
-                        cell = newCell;
-                    }
+                    cell ??= row.InsertBefore(new Cell() { CellReference = cellReference }, preveousCell);
+
                     cell.StyleIndex = style.GetValue<uint>();
-                    preveous = cell;
-
-                    if (columnName == merge.CellTo.Column) break;
-                    columnName = columnName.NextColumn();
+                    preveousCell = cell;
                 }
             }
         }
         #endregion
-
-      
 
         public void ConfigureColumns(List<ExcelColumnSettings> settings)
         {
@@ -277,15 +251,18 @@ namespace PIHelperSh.ExcelCreator
             {
                 return;
             }
+
             Columns? columns = _worksheet.GetFirstChild<Columns>();
+
             if (columns == null)
             {
                 columns = new Columns();
-                _worksheet.InsertAt(columns, 0);
+                _ = _worksheet.InsertAt(columns, 0);
             }
+
             foreach (var column in settings)
             {
-                UInt32Value cid = column.ColumnNumber;
+                uint cid = column.ColumnNumber;
                 columns.Append(new Column { Min = cid, Max = cid, Width = column.Width, CustomWidth = true });
             }
         }
@@ -296,124 +273,113 @@ namespace PIHelperSh.ExcelCreator
             {
                 return;
             }
+
             var sheetData = _worksheet.GetFirstChild<SheetData>();
+            
             if (sheetData == null)
             {
                 return;
             }
 
             // Ищем строку, либо добавляем ее
-            Row? row = sheetData.Elements<Row>().Where(r => r.RowIndex! == excelRow.Row).FirstOrDefault();
-            if (row == null)
+            Row? targetRow = sheetData.Elements<Row>().Where(r => r.RowIndex! == excelRow.ExcelRow).FirstOrDefault();
+            if (targetRow == null)
             {
-                row = new Row() { RowIndex = excelRow.Row };
-                sheetData.Append(row);
+                targetRow = new Row() { RowIndex = excelRow.ExcelRow };
+                sheetData.Append(targetRow);
             }
 
-            Cell? preveous = null;
-            string column = excelRow.Column;
+            ExcelCell currentCell = new(excelRow.Column, excelRow.Row);
+            Cell preveousCell = targetRow
+                .Elements<Cell>()
+                .Last(rc => string.Compare(rc.CellReference!.Value, currentCell.CellReference, true) < 0);
+
             int sharedStringCount = _shareStringPart.SharedStringTable.Elements<SharedStringItem>().Count();
 
-            foreach (var item in excelRow.CellsTexts)
+            foreach (var item in excelRow.CellsValues)
             {
-                string reference = $"{column}{excelRow.Row}";
-                Cell? cell = row.Elements<Cell>().Where(c => c.CellReference!.Value == reference).FirstOrDefault();
-                if (cell == null)
-                {
-                    // Все ячейки должны быть последовательно друг за другом расположены
-                    // нужно определить, после какой вставлять
-                    if (preveous == null)
-                    {
-                        foreach (Cell rowCell in row.Elements<Cell>())
-                        {
-                            if (string.Compare(rowCell.CellReference!.Value, reference, true) > 0)
-                            {
-                                preveous = rowCell;
-                                break;
-                            }
-                        }
-                    }
+                Cell? cell = targetRow
+                    .Elements<Cell>()
+                    .FirstOrDefault(c => c.CellReference!.Value == currentCell.CellReference);
 
-                    var newCell = new Cell() { CellReference = reference };
-                    row.InsertAfter(newCell, preveous);
+                cell ??= targetRow.InsertAfter(new Cell() { CellReference = currentCell.CellReference }, preveousCell);
 
-                    cell = newCell;
-                }
+                // Получаем данные для вставки
+
+                var insertedValue = new ExcelCellValue(item); 
 
                 // вставляем новый текст
-                _shareStringPart.SharedStringTable.AppendChild(new SharedStringItem(new Text(item)));
-                _shareStringPart.SharedStringTable.Save();
 
-                cell.CellValue = new CellValue(sharedStringCount.ToString());
-                cell.DataType = new EnumValue<CellValues>(CellValues.SharedString);
+                cell.DataType = insertedValue.Type;
+                cell.CellValue = insertedValue.Value;
                 cell.StyleIndex = excelRow.StyleInfo.GetValue<uint>();
 
-                sharedStringCount++;
-                column = column.NextColumn();
-                preveous = cell;
+                _shareStringPart.SharedStringTable.AppendChild(new SharedStringItem(insertedValue.Value));
+                _shareStringPart.SharedStringTable.Save();
+
+                preveousCell = cell;
+                ++sharedStringCount;
+                ++currentCell.Column;
             }
         }
 
-        public void InsertCell(ExcelCellParameters excelParams)
+        public void InsertCell(ExcelCellParameters cellParams)
         {
             if (_worksheet == null || _shareStringPart == null)
             {
                 return;
             }
+
             var sheetData = _worksheet.GetFirstChild<SheetData>();
+
             if (sheetData == null)
             {
                 return;
             }
 
             // Ищем строку, либо добавляем ее
-            Row? row = sheetData.Elements<Row>().Where(r => r.RowIndex! == excelParams.Cell.Row).FirstOrDefault();
+            Row? row = sheetData.Elements<Row>().FirstOrDefault(r => r.RowIndex! == cellParams.Cell.ExcelRow);
+
             if (row == null)
             {
-                row = new Row() { RowIndex = excelParams.Cell.Row };
+                row = new Row() { RowIndex = cellParams.Cell.Row };
                 sheetData.Append(row);
             }
 
             // Ищем нужную ячейку  
-            Cell? cell = row.Elements<Cell>().Where(c => c.CellReference!.Value == excelParams.CellReference).FirstOrDefault();
+            Cell? cell = row.Elements<Cell>().FirstOrDefault(c => c.CellReference!.Value == cellParams.CellReference);
+
             if (cell == null)
             {
                 // Все ячейки должны быть последовательно друг за другом расположены
                 // нужно определить, после какой вставлять
-                Cell? refCell = null;
-                foreach (Cell rowCell in row.Elements<Cell>())
-                {
-                    if (string.Compare(rowCell.CellReference!.Value, excelParams.CellReference, true) > 0)
-                    {
-                        refCell = rowCell;
-                        break;
-                    }
-                }
+                Cell? preveousCell = row
+                    .Elements<Cell>()
+                    .Last(rc => string.Compare(rc.CellReference!.Value, cellParams.CellReference, true) < 0);
 
-                var newCell = new Cell() { CellReference = excelParams.CellReference };
-                row.InsertBefore(newCell, refCell);
-
-                cell = newCell;
+                cell = row.InsertBefore(
+                    new Cell() { CellReference = cellParams.CellReference },
+                    preveousCell);
             }
 
             // вставляем новый текст
-            _shareStringPart.SharedStringTable.AppendChild(new SharedStringItem(new Text(excelParams.Text)));
+            _shareStringPart.SharedStringTable.AppendChild(new SharedStringItem(new Text(cellParams.Text)));
             _shareStringPart.SharedStringTable.Save();
 
-            if (excelParams.EndCell != null)
+            if (cellParams.EndCell != null)
             {
                 var merge = new ExcelMergeParameters
                 {
-                    CellFrom = excelParams.Cell,
-                    CellTo = excelParams.EndCell
+                    CellFrom = cellParams.Cell,
+                    CellTo = cellParams.EndCell
                 };
                 MergeCells(merge);
-                AddCellMergeBorder(merge, excelParams.StyleInfo);//Стиль текущей ячейки будет применён тут
+                AddCellMergeBorder(merge, cellParams.StyleInfo);//Стиль текущей ячейки будет применён тут
             }
-            else cell.StyleIndex = excelParams.StyleInfo.GetValue<uint>(); //Если это не объединение - стиль надо применить
+            else cell!.StyleIndex = cellParams.StyleInfo.GetValue<uint>(); //Если это не объединение - стиль надо применить
 
-            cell.CellValue = new CellValue((_shareStringPart.SharedStringTable.Elements<SharedStringItem>().Count() - 1).ToString());//Устанавливаем текст
-            cell.DataType = new EnumValue<CellValues>(CellValues.SharedString);//Устанавливаем тип
+            cell!.CellValue = new CellValue((_shareStringPart.SharedStringTable.Elements<SharedStringItem>().Count() - 1).ToString()); //Устанавливаем текст
+            cell.DataType = new EnumValue<CellValues>(CellValues.SharedString); //Устанавливаем тип
         }
 
         public void MergeCells(ExcelMergeParameters excelParams)
@@ -422,6 +388,7 @@ namespace PIHelperSh.ExcelCreator
             {
                 return;
             }
+
             MergeCells? mergeCells = _worksheet.Elements<MergeCells>().FirstOrDefault();
 
             if (mergeCells == null)
@@ -451,14 +418,15 @@ namespace PIHelperSh.ExcelCreator
             {
                 throw new InvalidOperationException("To save a document, it must first be created!");
             }
+
             _spreadsheetDocument.WorkbookPart!.Workbook.Save();
             _spreadsheetDocument.Dispose();
 
-            if (stream == null)
+            if (_stream == null)
                 throw new InvalidOperationException("The return stream was empty!");
 
-            stream.Seek(0, SeekOrigin.Begin);
-            return stream;
+            _stream.Seek(0, SeekOrigin.Begin);
+            return _stream;
         }
 
         public void SaveExcel(string filename)
