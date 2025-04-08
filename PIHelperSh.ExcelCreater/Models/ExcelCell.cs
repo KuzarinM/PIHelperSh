@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using PIHelperSh.ExcelCreator.Helpers;
 
 namespace PIHelperSh.ExcelCreator.Models
 {
@@ -12,26 +8,56 @@ namespace PIHelperSh.ExcelCreator.Models
     public class ExcelCell
     {
         /// <summary>
-        /// Название столбца
+        /// Номер столбца
         /// </summary>
-        public string Column { get; set; } = string.Empty;
+        public uint Column { get; set; } = 0;
 
         /// <summary>
         /// Номер строки
         /// </summary>
-        public uint Row { get; set; }
+        public uint Row { get; set; } = 0;
+        
+        /// <summary>
+        /// Номер столбца в стиле excel
+        /// </summary>
+        public string ExcelColumn 
+        { 
+            get => CellHelper.ToExcelFormat(Column);
+            set => Column = CellHelper.FromExcelFormat(value); 
+        }
+                
+        /// <summary>
+        /// Номер строки в стиле excel
+        /// </summary>
+        public uint ExcelRow { get => Row + 1; set => Row = value - 1; }
 
         /// <summary>
         /// Полное имя ячейки
         /// </summary>
-        public string CellReference => $"{Column}{Row}";
+        public string CellReference => $"{ExcelColumn}{ExcelColumn}";
 
+        /// <summary>
+        /// </summary>
         public ExcelCell() { }
 
-        public ExcelCell(string ColumnName, uint RowNumber)
+        /// <summary>
+        /// </summary>
+        /// <param name="column">Номер столбца</param>
+        /// <param name="row">Номер строки</param>
+        public ExcelCell(uint column, uint row)
         {
-            Column = ColumnName;
-            Row = RowNumber;
+            Column = column;
+            Row = row;
+        }
+
+        /// <summary>
+        /// </summary>
+        /// <param name="excelColumn">Номер столбца в стиле excel</param>
+        /// <param name="excelRow">Номер строки в стиле excel</param>
+        public ExcelCell(string excelColumn, uint excelRow)
+        {
+            ExcelColumn = excelColumn;
+            ExcelRow = excelRow;
         }
     }
 }

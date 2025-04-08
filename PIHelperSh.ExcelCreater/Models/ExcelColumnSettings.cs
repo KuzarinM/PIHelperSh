@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace PIHelperSh.ExcelCreator.Models
+﻿namespace PIHelperSh.ExcelCreator.Models
 {
     /// <summary>
     /// Данный класс необходим для настройки ширины столбцов. Более нигде не применяется
